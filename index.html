@@ -1,0 +1,2611 @@
+<!doctype html>
+<html lang="pt">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>O Jogo da Puberdade - Aprenda com a História de Quatro Jovens em Anime</title>
+  <script src="/_sdk/element_sdk.js"></script>
+  <style>
+        body {
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100%;
+            margin: 0;
+            background: linear-gradient(135deg, 
+                rgba(74, 144, 226, 0.9) 0%, 
+                rgba(143, 130, 255, 0.9) 50%, 
+                rgba(255, 107, 107, 0.9) 100%);
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Bolhas flutuantes de fundo */
+        .floating-bubbles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .bubble {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .bubble:nth-child(1) {
+            width: 80px;
+            height: 80px;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .bubble:nth-child(2) {
+            width: 60px;
+            height: 60px;
+            left: 20%;
+            animation-delay: 2s;
+        }
+
+        .bubble:nth-child(3) {
+            width: 100px;
+            height: 100px;
+            left: 35%;
+            animation-delay: 4s;
+        }
+
+        .bubble:nth-child(4) {
+            width: 40px;
+            height: 40px;
+            left: 50%;
+            animation-delay: 1s;
+        }
+
+        .bubble:nth-child(5) {
+            width: 70px;
+            height: 70px;
+            left: 65%;
+            animation-delay: 3s;
+        }
+
+        .bubble:nth-child(6) {
+            width: 90px;
+            height: 90px;
+            left: 80%;
+            animation-delay: 5s;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10%, 90% {
+                opacity: 1;
+            }
+            50% {
+                transform: translateY(-100px) rotate(180deg);
+            }
+        }
+
+        /* Título principal imersivo */
+        .main-title {
+            text-align: center;
+            margin-bottom: 30px;
+            z-index: 10;
+        }
+
+        .main-title h1 {
+            font-size: 2.5em;
+            font-weight: bold;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 3s ease-in-out infinite;
+            text-shadow: 0 0 30px rgba(255, 255, 255, 0.5);
+            margin: 0;
+        }
+
+        .main-title p {
+            font-size: 1.2em;
+            color: rgba(255, 255, 255, 0.9);
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            margin: 10px 0 0 0;
+            font-style: italic;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+        }
+
+        html {
+            height: 100%;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        /* Esconde elementos até que o jogo comece */
+        .hidden {
+            display: none !important;
+        }
+
+        /* --- Tela de Cobertura Inicial (Vídeo/Imagem de Segurança) --- */
+
+        #cover-screen {
+            position: fixed; 
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: black;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 10; 
+            transition: opacity 0.5s;
+            
+            /* Imagem de segurança caso o vídeo falhe */
+            background-image: url('img/curiosidade.jpg'); 
+            background-size: contain; 
+            background-repeat: no-repeat;
+            background-position: center;
+        }
+
+        #intro-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover; 
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+
+        /* --- Estilo para o Overlay de Opções (Botões) --- */
+        #option-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 2; /* Acima do vídeo */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(0, 0, 0, 0.4); 
+        }
+
+        #option-overlay h1 {
+            color: white;
+            font-size: 2em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+            margin-bottom: 10px;
+        }
+
+        #option-overlay p {
+            color: white;
+            font-size: 1.5em;
+            margin-bottom: 20px;
+        }
+
+        #option-overlay button {
+            padding: 10px 20px;
+            margin: 10px;
+            font-size: 1.1em;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.2s, transform 0.2s;
+        }
+
+        #watch-video {
+            background-color: #007bff;
+            color: white;
+        }
+
+        #skip-video {
+            background-color: #f0f0f0;
+            color: #333;
+        }
+
+        #option-overlay button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Oculta o overlay de opções quando o vídeo está tocando */
+        .hide-options {
+            display: none !important;
+        }
+
+        /* --- Container do Jogo e Grid (4x2 para 8 cartas) --- */
+
+        #game-container {
+            padding-top: 50px; 
+        }
+
+        #card-grid {
+            display: grid;
+            /* 4 colunas para 12 cartas (3x4) */
+            grid-template-columns: repeat(4, 1fr); 
+            gap: 8px;
+            width: 100%;
+            max-width: 600px; 
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            margin: 0 auto;
+        }
+
+        /* --- Estilo das Cartas (Lógica de Virar) --- */
+
+        .card {
+            width: 100%; 
+            height: 120px; 
+            cursor: pointer;
+            border-radius: 5px;
+            
+            /* PADRÃO: COBERTA pela imagem de curiosidade */
+            background-image: url('img/curiosidade.jpg') !important; 
+            background-size: cover;
+            background-position: center;
+            
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            opacity: 1; 
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: 3px solid transparent;
+        }
+
+        /* CLASSE PARA REVELAR A CARTA (Face-up) */
+        .face-up {
+            background-image: var(--card-face-image) !important; 
+        }
+
+        /* Classe para o par encontrado */
+        .match {
+            box-shadow: 0 0 15px 5px #4CAF50; 
+            cursor: default;
+        }
+
+        /* Cartas especiais com ícones */
+        .icon-card {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3em;
+            text-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
+            border: 3px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .icon-card.face-up {
+            background: var(--icon-gradient) !important;
+        }
+
+        /* --- Estilo para Ampliação (Zoom) da Carta --- */
+
+        .zoomed-card {
+            position: fixed !important; 
+            top: 50%; 
+            left: 50%; 
+            
+            /* ZOOM AJUSTADO: Escala de 1.8 */
+            transform: translate(-50%, -50%) scale(1.8); 
+            
+            /* Dimensões ajustadas para o zoom 1.8x */
+            width: 216px !important; 
+            height: 324px !important; 
+            
+            z-index: 100; 
+            cursor: zoom-out !important; 
+            
+            border: 5px solid yellow;
+            transition: transform 0.3s ease-out;
+        }
+
+        /* Estilo para Mensagens de Jogo */
+        #info {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1.1em;
+        }
+
+        #message {
+            font-weight: bold;
+            color: #007bff;
+        }
+
+        /* Painel de Jogadores Aprimorado */
+        #players-panel {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 20px 25px;
+            border-radius: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            max-width: 700px;
+            width: 100%;
+        }
+
+        .player-info {
+            text-align: center;
+            padding: 15px;
+            border-radius: 15px;
+            transition: all 0.3s ease;
+            min-width: 160px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid transparent;
+        }
+
+        .player-info.active {
+            background: linear-gradient(145deg, #4ecdc4, #26a69a);
+            color: white;
+            transform: scale(1.08);
+            box-shadow: 0 8px 25px rgba(78, 205, 196, 0.5);
+            border-color: #ffffff;
+        }
+
+        .player-avatar {
+            font-size: 3em;
+            margin-bottom: 8px;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+        }
+
+        .player-info h3 {
+            margin: 0 0 8px 0;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+
+        .player-info .score {
+            font-size: 2em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .player-stats {
+            font-size: 0.9em;
+            opacity: 0.9;
+            margin-top: 8px;
+        }
+
+        .player-stats div {
+            margin: 2px 0;
+        }
+
+        .streak-indicator {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.8em;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+
+        .streak-hot {
+            background: linear-gradient(45deg, #ff6b6b, #ff8e53);
+            color: white;
+            animation: pulse 1s infinite;
+        }
+
+        .streak-cold {
+            background: rgba(255, 255, 255, 0.2);
+            color: #ccc;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        /* Seletor de Modo de Jogo */
+        #game-mode-selector {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .mode-btn {
+            background: #f0f0f0;
+            border: 2px solid #ddd;
+            padding: 10px 20px;
+            margin: 0 10px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1em;
+        }
+
+        .mode-btn.active {
+            background: linear-gradient(145deg, #4ecdc4, #26a69a);
+            color: white;
+            border-color: #26a69a;
+        }
+
+        .mode-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Classe para cartas que já foram combinadas */
+        .matched {
+            opacity: 0.7;
+            transform: scale(0.9);
+            pointer-events: none;
+            border-color: #00ff88;
+            box-shadow: 0 5px 20px rgba(0, 255, 136, 0.3);
+        }
+
+        .matched::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 2rem;
+            color: #00ff88;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+            z-index: 10;
+        }
+
+        /* Cartas "Tente de Novo" */
+        .try-again-card {
+            background: linear-gradient(145deg, #ff6b6b, #ee5a52) !important;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.9em;
+            text-align: center;
+        }
+
+        /* Roleta 3D Aprimorada */
+        #roulette-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .roulette-title {
+            color: #ffd93d;
+            font-size: 2.5em;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-shadow: 0 0 20px rgba(255, 217, 61, 0.8);
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 20px rgba(255, 217, 61, 0.8); }
+            to { text-shadow: 0 0 30px rgba(255, 217, 61, 1), 0 0 40px rgba(255, 217, 61, 0.8); }
+        }
+
+        .roulette-wheel {
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            position: relative;
+            transform-style: preserve-3d;
+            background: conic-gradient(
+                #ff6b6b 0deg 60deg,
+                #4ecdc4 60deg 120deg,
+                #ffd93d 120deg 180deg,
+                #9b59b6 180deg 240deg,
+                #e67e22 240deg 300deg,
+                #2ecc71 300deg 360deg
+            );
+            border: 12px solid #333;
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.8), inset 0 0 30px rgba(255, 255, 255, 0.1);
+        }
+
+        .roulette-wheel::before {
+            content: '';
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 20px solid transparent;
+            border-right: 20px solid transparent;
+            border-top: 40px solid #333;
+            z-index: 10;
+            filter: drop-shadow(0 5px 10px rgba(0, 0, 0, 0.5));
+        }
+
+        .roulette-section {
+            position: absolute;
+            width: 50%;
+            height: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 2.5em;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+            text-align: center;
+            padding: 10px;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+        }
+
+        .section-1 { top: 0; left: 50%; transform-origin: 0 100%; transform: rotate(30deg); }
+        .section-2 { top: 25%; left: 75%; transform-origin: 0 50%; transform: rotate(90deg); }
+        .section-3 { top: 50%; left: 50%; transform-origin: 0 0; transform: rotate(150deg); }
+        .section-4 { top: 50%; left: 0; transform-origin: 100% 0; transform: rotate(210deg); }
+        .section-5 { top: 25%; left: 0; transform-origin: 100% 50%; transform: rotate(270deg); }
+        .section-6 { top: 0; left: 0; transform-origin: 100% 100%; transform: rotate(330deg); }
+
+        .roulette-spinning {
+            animation: spin 4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(1800deg); }
+        }
+
+        .prize-display {
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+            text-align: center;
+            max-width: 400px;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+        }
+
+        .prize-display.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .prize-display h3 {
+            color: #ffd93d;
+            font-size: 1.5em;
+            margin-bottom: 10px;
+        }
+
+        .prize-display p {
+            color: white;
+            font-size: 1.1em;
+            margin-bottom: 15px;
+        }
+
+        .close-roulette {
+            background: linear-gradient(145deg, #4ecdc4, #26a69a);
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 25px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .close-roulette:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Efeitos de Partículas */
+        .coin-rain {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 999;
+        }
+
+        .coin {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background: radial-gradient(circle, #ffd700, #ffed4e);
+            border-radius: 50%;
+            animation: coinFall 2s linear;
+        }
+
+        @keyframes coinFall {
+            0% {
+                transform: translateY(-100px) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* CHUVA ÉPICA DE MOEDAS DOURADAS */
+        .epic-coin-rain {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 999;
+            overflow: hidden;
+        }
+
+        .golden-coin {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            background: radial-gradient(circle, 
+                #ffd700 0%, 
+                #ffed4e 30%, 
+                #ffd700 60%, 
+                #ffb347 100%);
+            border-radius: 50%;
+            border: 3px solid #ffaa00;
+            animation: goldenCoinFall 3s linear;
+            box-shadow: 
+                0 0 20px #ffd700,
+                0 0 40px #ffed4e,
+                inset 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+
+        .golden-coin::before {
+            content: '💰';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 20px;
+            text-shadow: 0 0 10px #fff;
+        }
+
+        .golden-coin.super-sparkle {
+            animation: goldenCoinFallSparkle 3s linear;
+            box-shadow: 
+                0 0 30px #ffd700,
+                0 0 60px #ffed4e,
+                0 0 90px #fff,
+                inset 0 0 15px rgba(255, 255, 255, 0.8);
+        }
+
+        @keyframes goldenCoinFall {
+            0% {
+                transform: translateY(-100px) rotate(0deg) scale(0.5);
+                opacity: 1;
+            }
+            20% {
+                transform: translateY(20vh) rotate(72deg) scale(1.2);
+                opacity: 1;
+            }
+            40% {
+                transform: translateY(40vh) rotate(144deg) scale(1);
+                opacity: 1;
+            }
+            60% {
+                transform: translateY(60vh) rotate(216deg) scale(1.1);
+                opacity: 0.9;
+            }
+            80% {
+                transform: translateY(80vh) rotate(288deg) scale(0.9);
+                opacity: 0.7;
+            }
+            100% {
+                transform: translateY(120vh) rotate(360deg) scale(0.5);
+                opacity: 0;
+            }
+        }
+
+        @keyframes goldenCoinFallSparkle {
+            0% {
+                transform: translateY(-100px) rotate(0deg) scale(0.5);
+                opacity: 1;
+                filter: brightness(1) hue-rotate(0deg);
+            }
+            25% {
+                transform: translateY(25vh) rotate(90deg) scale(1.5);
+                opacity: 1;
+                filter: brightness(1.5) hue-rotate(30deg);
+            }
+            50% {
+                transform: translateY(50vh) rotate(180deg) scale(1.2);
+                opacity: 1;
+                filter: brightness(2) hue-rotate(60deg);
+            }
+            75% {
+                transform: translateY(75vh) rotate(270deg) scale(1.3);
+                opacity: 0.8;
+                filter: brightness(1.8) hue-rotate(90deg);
+            }
+            100% {
+                transform: translateY(120vh) rotate(360deg) scale(0.8);
+                opacity: 0;
+                filter: brightness(1) hue-rotate(120deg);
+            }
+        }
+
+        .explosion {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, #ff4444, #cc0000);
+            border-radius: 50%;
+            animation: explode 1s ease-out;
+            z-index: 999;
+            pointer-events: none;
+        }
+
+        @keyframes explode {
+            0% {
+                transform: translate(-50%, -50%) scale(0);
+                opacity: 1;
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(1.5);
+                opacity: 0.8;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(3);
+                opacity: 0;
+            }
+        }
+
+        /* MEGA BOMBA - Explosão gigante quando errar */
+        .mega-explosion {
+            position: fixed;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, 
+                #ff0000 0%, 
+                #ff4444 20%, 
+                #ff8800 40%, 
+                #ffaa00 60%, 
+                #ffff00 80%, 
+                transparent 100%);
+            border-radius: 50%;
+            animation: megaExplode 2s ease-out;
+            z-index: 999;
+            pointer-events: none;
+            box-shadow: 
+                0 0 100px #ff0000,
+                0 0 200px #ff4444,
+                0 0 300px #ff8800;
+        }
+
+        @keyframes megaExplode {
+            0% {
+                transform: translate(-50%, -50%) scale(0) rotate(0deg);
+                opacity: 1;
+            }
+            25% {
+                transform: translate(-50%, -50%) scale(2) rotate(90deg);
+                opacity: 0.9;
+            }
+            50% {
+                transform: translate(-50%, -50%) scale(4) rotate(180deg);
+                opacity: 0.7;
+            }
+            75% {
+                transform: translate(-50%, -50%) scale(6) rotate(270deg);
+                opacity: 0.4;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(8) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Efeito de tela tremendo */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10% { transform: translateX(-10px) rotate(-1deg); }
+            20% { transform: translateX(10px) rotate(1deg); }
+            30% { transform: translateX(-8px) rotate(-1deg); }
+            40% { transform: translateX(8px) rotate(1deg); }
+            50% { transform: translateX(-6px) rotate(-0.5deg); }
+            60% { transform: translateX(6px) rotate(0.5deg); }
+            70% { transform: translateX(-4px) rotate(-0.5deg); }
+            80% { transform: translateX(4px) rotate(0.5deg); }
+            90% { transform: translateX(-2px) rotate(0); }
+        }
+
+        .game-over {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 2rem;
+            border-radius: 20px;
+            margin: 2rem auto;
+            max-width: 400px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .game-over h2 {
+            color: #ff6b6b;
+            margin-bottom: 1rem;
+            font-size: 2rem;
+        }
+
+        .game-over p {
+            color: #666;
+            margin-bottom: 1.5rem;
+            font-size: 1.1rem;
+        }
+
+        .restart-btn {
+            background: linear-gradient(145deg, #4ecdc4, #26a69a);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .restart-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Robozinho Flutuante com História */
+        .floating-robot {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(145deg, #4ecdc4, #26a69a);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5em;
+            cursor: pointer;
+            z-index: 1000;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            animation: robotFloat 3s ease-in-out infinite;
+            transition: all 0.3s ease;
+        }
+
+        .floating-robot:hover {
+            transform: scale(1.1);
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.4);
+        }
+
+        @keyframes robotFloat {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .story-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1001;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+
+        .story-content {
+            background: linear-gradient(145deg, #ffffff, #f8f9fa);
+            border-radius: 20px;
+            padding: 30px;
+            max-width: 600px;
+            width: 100%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            position: relative;
+            animation: modalSlideIn 0.5s ease-out;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .story-header {
+            text-align: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid #4ecdc4;
+        }
+
+        .story-header h2 {
+            color: #2c3e50;
+            font-size: 1.8em;
+            margin: 0 0 10px 0;
+            background: linear-gradient(45deg, #4ecdc4, #26a69a);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .story-header .robot-emoji {
+            font-size: 2em;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .story-text {
+            color: #34495e;
+            line-height: 1.6;
+            font-size: 1.1em;
+            margin-bottom: 20px;
+        }
+
+        .story-text h3 {
+            color: #2c3e50;
+            margin: 20px 0 10px 0;
+            font-size: 1.3em;
+        }
+
+        .story-text p {
+            margin-bottom: 15px;
+        }
+
+        .story-highlight {
+            background: linear-gradient(145deg, #fff3cd, #ffeaa7);
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid #f39c12;
+            margin: 20px 0;
+            font-style: italic;
+        }
+
+        .close-story {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: none;
+            border: none;
+            font-size: 1.5em;
+            cursor: pointer;
+            color: #7f8c8d;
+            transition: color 0.3s ease;
+        }
+
+        .close-story:hover {
+            color: #e74c3c;
+        }
+
+        .start-game-btn {
+            background: linear-gradient(145deg, #4ecdc4, #26a69a);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: block;
+            margin: 20px auto 0;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .start-game-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Responsividade Aprimorada para Todos os Dispositivos */
+        
+        /* Tablets e Telas Médias (768px - 1024px) */
+        @media (max-width: 1024px) {
+            .main-title h1 {
+                font-size: 2.2em;
+            }
+            
+            #card-grid {
+                max-width: 550px;
+                gap: 10px;
+                padding: 18px;
+            }
+            
+            .card {
+                height: 100px;
+            }
+            
+            #players-panel {
+                max-width: 650px;
+                padding: 18px;
+            }
+        }
+
+        /* Tablets Pequenos e Celulares Grandes (768px) */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .main-title h1 {
+                font-size: 2em;
+                margin-bottom: 8px;
+            }
+            
+            .main-title p {
+                font-size: 1em;
+                margin-bottom: 15px;
+            }
+            
+            #card-grid {
+                width: 95%;
+                max-width: 480px;
+                gap: 8px;
+                padding: 15px;
+                /* Grid 4x3 para melhor visualização em tablets */
+                grid-template-columns: repeat(4, 1fr);
+            }
+            
+            .card {
+                height: 85px;
+                border-radius: 8px;
+            }
+            
+            .zoomed-card {
+                transform: translate(-50%, -50%) scale(1.6) !important;
+                width: 192px !important;
+                height: 288px !important;
+            }
+            
+            #players-panel {
+                flex-direction: column;
+                gap: 12px;
+                padding: 15px;
+                max-width: 90%;
+            }
+            
+            .player-info {
+                min-width: 220px;
+                padding: 15px;
+            }
+            
+            .player-avatar {
+                font-size: 2.5em;
+            }
+            
+            #option-overlay h1 {
+                font-size: 1.8em;
+                margin-bottom: 15px;
+            }
+            
+            #option-overlay p {
+                font-size: 1.2em;
+                margin-bottom: 20px;
+            }
+            
+            #option-overlay button {
+                padding: 12px 25px;
+                font-size: 1rem;
+                margin: 8px;
+                min-width: 180px;
+            }
+            
+            .roulette-wheel {
+                width: 280px;
+                height: 280px;
+            }
+            
+            .roulette-section {
+                font-size: 2.2em;
+            }
+            
+            #performance-panel {
+                grid-template-columns: 1fr;
+                gap: 12px;
+                max-width: 90%;
+                padding: 12px;
+            }
+            
+            .mode-btn {
+                padding: 10px 18px;
+                margin: 5px;
+                font-size: 0.95em;
+            }
+        }
+
+        /* Celulares Médios (480px - 600px) */
+        @media (max-width: 600px) {
+            .main-title h1 {
+                font-size: 1.8em;
+            }
+            
+            .main-title p {
+                font-size: 0.95em;
+            }
+            
+            #card-grid {
+                width: 98%;
+                max-width: 400px;
+                gap: 6px;
+                padding: 12px;
+            }
+            
+            .card {
+                height: 75px;
+            }
+            
+            .zoomed-card {
+                transform: translate(-50%, -50%) scale(1.4) !important;
+                width: 168px !important;
+                height: 252px !important;
+            }
+            
+            #players-panel {
+                max-width: 95%;
+                padding: 12px;
+            }
+            
+            .player-info {
+                min-width: 200px;
+                padding: 12px;
+            }
+            
+            .player-avatar {
+                font-size: 2.2em;
+            }
+            
+            .roulette-wheel {
+                width: 240px;
+                height: 240px;
+            }
+            
+            .roulette-section {
+                font-size: 2em;
+            }
+            
+            .floating-robot {
+                width: 65px;
+                height: 65px;
+                font-size: 2.2em;
+                bottom: 18px;
+                right: 18px;
+            }
+        }
+
+        /* Celulares Pequenos (até 480px) */
+        @media (max-width: 480px) {
+            body {
+                padding: 5px;
+            }
+            
+            .main-title h1 {
+                font-size: 1.6em;
+                line-height: 1.2;
+            }
+            
+            .main-title p {
+                font-size: 0.9em;
+            }
+            
+            #card-grid {
+                width: 98%;
+                max-width: 350px;
+                gap: 4px;
+                padding: 10px;
+                /* Mantém 4 colunas mas com cartas menores */
+                grid-template-columns: repeat(4, 1fr);
+            }
+            
+            .card {
+                height: 65px;
+                border-radius: 6px;
+            }
+            
+            .zoomed-card {
+                transform: translate(-50%, -50%) scale(1.2) !important;
+                width: 144px !important;
+                height: 216px !important;
+            }
+            
+            #players-panel {
+                max-width: 98%;
+                padding: 10px;
+                gap: 8px;
+            }
+            
+            .player-info {
+                min-width: 180px;
+                padding: 10px;
+            }
+            
+            .player-avatar {
+                font-size: 2em;
+            }
+            
+            #option-overlay h1 {
+                font-size: 1.4em;
+                margin-bottom: 10px;
+            }
+            
+            #option-overlay p {
+                font-size: 1em;
+                margin-bottom: 15px;
+            }
+            
+            #option-overlay button {
+                padding: 10px 20px;
+                font-size: 0.9em;
+                margin: 6px;
+                min-width: 160px;
+            }
+            
+            .mode-btn {
+                padding: 8px 15px;
+                margin: 4px;
+                font-size: 0.85em;
+            }
+            
+            .roulette-wheel {
+                width: 200px;
+                height: 200px;
+            }
+            
+            .roulette-section {
+                font-size: 1.6em;
+            }
+            
+            .roulette-title {
+                font-size: 1.8em;
+            }
+            
+            .floating-robot {
+                width: 55px;
+                height: 55px;
+                font-size: 1.8em;
+                bottom: 15px;
+                right: 15px;
+            }
+            
+            .story-content {
+                padding: 15px;
+                margin: 8px;
+                max-height: 85vh;
+            }
+            
+            .story-header h2 {
+                font-size: 1.3em;
+            }
+            
+            .story-text {
+                font-size: 0.95em;
+                line-height: 1.5;
+            }
+            
+            #performance-panel {
+                grid-template-columns: 1fr;
+                gap: 8px;
+                padding: 10px;
+                font-size: 0.9em;
+            }
+        }
+
+        /* Celulares Muito Pequenos (até 360px) */
+        @media (max-width: 360px) {
+            .main-title h1 {
+                font-size: 1.4em;
+            }
+            
+            .main-title p {
+                font-size: 0.85em;
+            }
+            
+            #card-grid {
+                max-width: 320px;
+                gap: 3px;
+                padding: 8px;
+            }
+            
+            .card {
+                height: 55px;
+            }
+            
+            .zoomed-card {
+                transform: translate(-50%, -50%) scale(1.1) !important;
+                width: 132px !important;
+                height: 198px !important;
+            }
+            
+            .player-info {
+                min-width: 160px;
+                padding: 8px;
+            }
+            
+            .player-avatar {
+                font-size: 1.8em;
+            }
+            
+            #option-overlay h1 {
+                font-size: 1.2em;
+            }
+            
+            #option-overlay p {
+                font-size: 0.9em;
+            }
+            
+            #option-overlay button {
+                padding: 8px 16px;
+                font-size: 0.85em;
+                min-width: 140px;
+            }
+            
+            .floating-robot {
+                width: 50px;
+                height: 50px;
+                font-size: 1.6em;
+                bottom: 12px;
+                right: 12px;
+            }
+            
+            .story-content {
+                padding: 12px;
+                margin: 5px;
+            }
+            
+            .story-header h2 {
+                font-size: 1.2em;
+            }
+            
+            .story-text {
+                font-size: 0.9em;
+            }
+        }
+
+        /* Otimizações específicas para iOS */
+        @supports (-webkit-touch-callout: none) {
+            body {
+                -webkit-touch-callout: none;
+                -webkit-user-select: none;
+                -webkit-tap-highlight-color: transparent;
+            }
+            
+            .card {
+                -webkit-tap-highlight-color: transparent;
+                touch-action: manipulation;
+            }
+            
+            button {
+                -webkit-appearance: none;
+                border-radius: 0;
+            }
+        }
+    </style>
+  <style>@view-transition { navigation: auto; }</style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+  <script src="https://cdn.tailwindcss.com" type="text/javascript"></script>
+ </head>
+ <body><!-- Bolhas flutuantes de fundo -->
+  <div class="floating-bubbles">
+   <div class="bubble"></div>
+   <div class="bubble"></div>
+   <div class="bubble"></div>
+   <div class="bubble"></div>
+   <div class="bubble"></div>
+   <div class="bubble"></div>
+  </div>
+  <main>
+   <div class="main-title">
+    <h1>O Jogo da Puberdade</h1>
+    <p>Aprenda com a História de Quatro Jovens em Anime</p>
+   </div>
+   <div id="cover-screen">
+    <video id="intro-video" width="100%" height="100%"><source src="video/Puberdade_Clique_No_Jogo.mp4" type="video/mp4"> Seu navegador não suporta a tag de vídeo.
+    </video>
+    <div id="option-overlay">
+     <h1 id="game-title">🎮 Jogo da Memória Anime</h1>
+     <p id="start-message">Seja bem-vindo(a) ao jogo!</p><button id="watch-video">▶️ Assistir Introdução</button> <button id="skip-video">Pular Introdução e Jogar</button>
+    </div>
+   </div>
+   <audio id="bgm" src="audio/bgm.mp3" loop></audio>
+   <audio id="sfx-coin" src="audio/coin.wav"></audio>
+   <audio id="sfx-win" src="audio/win.wav"></audio>
+   <audio id="sfx-error" src="audio/error.mp3"></audio>
+   <audio id="sfx-move" src="audio/move.mp3"></audio>
+   <div id="game-container" class="hidden">
+    <div id="game-mode-selector"><button class="mode-btn active" onclick="setGameMode('single')">1 Jogador</button> <button class="mode-btn" onclick="setGameMode('multiplayer')">2 Jogadores</button> <button class="mode-btn" onclick="showRoulette()" style="background: linear-gradient(145deg, #ffd93d, #ffb347); color: #333;">🎰 Roleta da Sorte</button>
+    </div>
+    <div id="players-panel" class="hidden">
+     <div class="player-info active" id="player1-info">
+      <div class="player-avatar">
+       🤖
+      </div>
+      <h3>Robo Akira</h3>
+      <div class="score" id="player1-score">
+       0
+      </div>
+      <div class="player-stats">
+       <div>
+        ⚡ <span id="player1-streak">0</span>
+       </div>
+       <div>
+        🎯 <span id="player1-accuracy">100%</span>
+       </div>
+       <div>
+        ⏱️ <span id="player1-avg-time">0s</span>
+       </div>
+      </div>
+      <div class="streak-indicator streak-cold" id="player1-streak-indicator">
+       ❄️
+      </div>
+     </div>
+     <div class="player-info" id="player2-info">
+      <div class="player-avatar">
+       🤖
+      </div>
+      <h3>Robo Sakura</h3>
+      <div class="score" id="player2-score">
+       0
+      </div>
+      <div class="player-stats">
+       <div>
+        ⚡ <span id="player2-streak">0</span>
+       </div>
+       <div>
+        🎯 <span id="player2-accuracy">100%</span>
+       </div>
+       <div>
+        ⏱️ <span id="player2-avg-time">0s</span>
+       </div>
+      </div>
+      <div class="streak-indicator streak-cold" id="player2-streak-indicator">
+       ❄️
+      </div>
+     </div>
+    </div>
+    <div id="info" style="background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 15px; padding: 15px; margin-bottom: 20px; color: white; text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);">
+     <p>Pares Encontrados: <span id="round">0</span>/6</p>
+     <p id="message">Clique em 'Pular' ou 'Assistir' para começar!</p>
+    </div><!-- Painel de Desempenho -->
+    <div id="performance-panel" class="hidden" style="background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 15px; padding: 15px; margin-bottom: 20px; color: white; text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3); display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; max-width: 600px; width: 100%;">
+     <div style="text-align: center;">
+      <h4 style="margin: 0 0 5px 0; color: #4ecdc4;">⏱️ Tempo</h4>
+      <div id="game-timer" style="font-size: 1.2em; font-weight: bold;">
+       00:00
+      </div>
+     </div>
+     <div style="text-align: center;">
+      <h4 style="margin: 0 0 5px 0; color: #ff6b6b;">🎯 Tentativas</h4>
+      <div id="attempts-count" style="font-size: 1.2em; font-weight: bold;">
+       0
+      </div>
+     </div>
+     <div style="text-align: center;">
+      <h4 style="margin: 0 0 5px 0; color: #ffd93d;">⭐ Precisão</h4>
+      <div id="accuracy-rate" style="font-size: 1.2em; font-weight: bold;">
+       100%
+      </div>
+     </div>
+    </div>
+    <div id="card-grid">
+    </div>
+   </div><!-- Robozinho Flutuante com História -->
+   <div class="floating-robot" onclick="showStory()">
+    🤖
+   </div><!-- Modal da História -->
+   <div class="story-modal" id="story-modal">
+    <div class="story-content"><button class="close-story" onclick="closeStory()">×</button>
+     <div class="story-header"><span class="robot-emoji">🤖</span>
+      <h2>Desvende o Mistério da Puberdade!</h2>
+     </div>
+     <div class="story-text">
+      <h3>🌸 A História:</h3>
+      <p>O primeiro ano do Ensino Médio chegou com cheiro de flores de cerejeira e uma avalanche de dúvidas!</p>
+      <p>Haruto, o líder da turma, encontrou um caderno misterioso deixado pela professora. Nele, não havia fórmulas, mas sim perguntas secretas sobre o crescimento, corpo e segurança.</p>
+      <p>"Ah, a professora foi fundo demais hoje," brinca Yuki, segurando um pacote de preservativos. "Temos que checar as dicas de segurança!"</p>
+      <p>Mas as informações estão espalhadas e embaralhadas. Haruto precisa da ajuda de Yuki, Akira e Momo para ligar as perguntas às respostas corretas.</p>
+      <div class="story-highlight">
+       <h3>🎯 O Desafio:</h3>
+       <p>As imagens que se parecem não são pares idênticos; elas escondem uma <strong>relação de causa e efeito</strong> ou de dúvida e solução.</p>
+       <p>Junte-se a eles! Encontre os pares de associação (como Guardar na Carteira e Não Guardar no Calor). <strong>Amplie a carta</strong> para ler a dica e ajude os jovens a desvendarem o código secreto da puberdade. Se for um par, confirme a resposta e pontue!</p>
+      </div>
+     </div><button class="start-game-btn" onclick="closeStoryAndStart()">🎮 Começar Aventura!</button>
+    </div>
+   </div><!-- Roleta 3D Aprimorada -->
+   <div id="roulette-container">
+    <h2 class="roulette-title">🎰 ROLETA DA SORTE 🎰</h2>
+    <div class="roulette-wheel">
+     <div class="roulette-section section-1">
+      🪙
+     </div>
+     <div class="roulette-section section-2">
+      ⏰
+     </div>
+     <div class="roulette-section section-3">
+      🔥
+     </div>
+     <div class="roulette-section section-4">
+      💎
+     </div>
+     <div class="roulette-section section-5">
+      🎯
+     </div>
+     <div class="roulette-section section-6">
+      🍀
+     </div>
+    </div>
+    <div class="prize-display" id="prize-display">
+     <h3 id="prize-title">🎉 Parabéns!</h3>
+     <p id="prize-description">Você ganhou um prêmio incrível!</p><button class="close-roulette" onclick="closeRoulette()">Continuar Jogando</button>
+    </div>
+   </div>
+  </main>
+  <script>
+        // Configuração para recursos editáveis
+        const defaultConfig = {
+            game_title: "🎮 O Jogo da Puberdade",
+            start_message: "Aprenda com a História de Quatro Jovens em Anime",
+            observe_message: "Observe a sequência!",
+            your_turn_message: "Sua vez! Repita a sequência."
+        };
+
+        // --- JOGO DA MEMÓRIA DE PARES: 4 PARES (8 CARTAS) ---
+
+        // Definindo os pares EXATOS conforme especificado:
+        // Par 1: imagem 2 com imagem 3 ✓
+        // Par 2: imagem 4 com imagem 5 ✓ 
+        // Par 3: imagem 6 com imagem 7 ✓
+        // Par 4: imagem 8 com imagem 9 ✓
+        // Par 5: Ícone Estrela Dourada (2 cartas)
+        // Par 6: Ícone Diamante Azul (2 cartas)
+        const imagePairs = [
+            { pair1: 'img/2anime.jpg', pair2: 'img/3anime.jpg', pairId: 'pair_2_3' },
+            { pair1: 'img/4anime.jpg', pair2: 'img/5anime.jpg', pairId: 'pair_4_5' },
+            { pair1: 'img/6anime.jpg', pair2: 'img/7anime.jpg', pairId: 'pair_6_7' },
+            { pair1: 'img/8anime.jpg', pair2: 'img/9anime.jpg', pairId: 'pair_8_9' }
+        ];
+
+        // Cartas especiais com ícones ocultos
+        const iconPairs = [
+            { icon: '🌟', color: '#ffd700', pairId: 'icon_star' },
+            { icon: '💎', color: '#4a90e2', pairId: 'icon_diamond' }
+        ];
+
+        // O array final de 8 cartas (4 pares)
+        let gameCards = []; 
+
+        // Variáveis do Novo Estado do Jogo - 2 JOGADORES
+        let hasFlippedCard = false;
+        let lockBoard = false;
+        let firstCard = null;
+        let secondCard = null;
+        let matchesFound = 0; // Total de 6 pares
+        let currentPlayer = 1; // Jogador atual (1 ou 2)
+        let player1Score = 0;
+        let player2Score = 0;
+        let gameMode = 'single'; // 'single' ou 'multiplayer'
+        
+        // Variáveis de Desempenho
+        let gameStartTime = 0;
+        let gameTimer = null;
+        let totalAttempts = 0;
+        let correctMatches = 0;
+        
+        // Estatísticas Detalhadas dos Jogadores
+        let playerStats = {
+            1: {
+                attempts: 0,
+                matches: 0,
+                streak: 0,
+                maxStreak: 0,
+                totalTime: 0,
+                lastMoveTime: 0,
+                moveTimes: []
+            },
+            2: {
+                attempts: 0,
+                matches: 0,
+                streak: 0,
+                maxStreak: 0,
+                totalTime: 0,
+                lastMoveTime: 0,
+                moveTimes: []
+            }
+        };
+        
+        // Variáveis da Roleta e Prêmios
+        let activeBonus = null;
+        let doublePointsNext = false;
+        let bonusCoins = 0;
+
+        // Elementos DOM
+        const coverScreen = document.getElementById('cover-screen');
+        const gameContainer = document.getElementById('game-container');
+        const cardGrid = document.getElementById('card-grid');
+        const roundElement = document.getElementById('round');
+        const messageElement = document.getElementById('message');
+        const introVideo = document.getElementById('intro-video');
+        const bgm = document.getElementById('bgm');
+        const sfxCoin = document.getElementById('sfx-coin');
+        const sfxWin = document.getElementById('sfx-win');
+        const sfxError = document.getElementById('sfx-error');
+        const sfxMove = document.getElementById('sfx-move');
+
+        /**
+         * Função utilitária para tocar sons rapidamente.
+         */
+        function playSFX(audio) {
+            audio.currentTime = 0; 
+            audio.play().catch(e => console.log("Erro ao tocar SFX:", e));
+        }
+
+        /**
+         * Função utilitária para embaralhar um array (Fisher-Yates)
+         */
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+        }
+
+        // --- Funções da Lógica do Jogo ---
+
+        /**
+         * 1. Prepara e Cria as 12 Cartas Embaralhadas (6 pares: 4 de imagens + 2 de ícones).
+         */
+        function createCards() {
+            // 1. Cria as 8 cartas baseadas nos pares de imagens
+            gameCards = [];
+            imagePairs.forEach(pairObj => {
+                // Adiciona ambas as imagens do par com o mesmo ID de par
+                gameCards.push({ image: pairObj.pair1, pairId: pairObj.pairId, type: 'image' });
+                gameCards.push({ image: pairObj.pair2, pairId: pairObj.pairId, type: 'image' });
+            });
+            
+            // 2. Adiciona as 4 cartas de ícones (2 pares)
+            iconPairs.forEach(iconObj => {
+                // Adiciona 2 cartas do mesmo ícone
+                gameCards.push({ 
+                    icon: iconObj.icon, 
+                    color: iconObj.color, 
+                    pairId: iconObj.pairId, 
+                    type: 'icon' 
+                });
+                gameCards.push({ 
+                    icon: iconObj.icon, 
+                    color: iconObj.color, 
+                    pairId: iconObj.pairId, 
+                    type: 'icon' 
+                });
+            });
+            
+            // 3. Embaralha as 12 cartas
+            shuffle(gameCards);
+            
+            // 4. Limpa o grid anterior
+            cardGrid.innerHTML = '';
+            
+            // 5. Adiciona as 12 cartas ao DOM
+            gameCards.forEach((cardObj, index) => {
+                const card = document.createElement('div');
+                card.classList.add('card');
+                card.dataset.id = cardObj.pairId; // ID do par para verificar correspondência
+                
+                if (cardObj.type === 'image') {
+                    // Carta de imagem
+                    card.style.setProperty('--card-face-image', `url(${cardObj.image})`);
+                    card.dataset.image = cardObj.image;
+                } else if (cardObj.type === 'icon') {
+                    // Carta de ícone
+                    card.classList.add('icon-card');
+                    card.style.setProperty('--icon-gradient', 
+                        `radial-gradient(circle, ${cardObj.color}, ${cardObj.color}dd)`);
+                    card.dataset.icon = cardObj.icon;
+                    card.innerHTML = `<span style="filter: drop-shadow(0 0 10px ${cardObj.color});">${cardObj.icon}</span>`;
+                }
+                
+                card.addEventListener('click', flipCard);
+                cardGrid.appendChild(card);
+            });
+        }
+
+        // Inicializa o jogo
+        function initGame() {
+            createCards();
+            startNewGame();
+        }
+
+        function startNewGame() {
+            // Reset das variáveis do jogo de pares
+            hasFlippedCard = false;
+            lockBoard = false;
+            firstCard = null;
+            secondCard = null;
+            matchesFound = 0;
+            currentPlayer = 1;
+            player1Score = 0;
+            player2Score = 0;
+            
+            // Reset das variáveis de desempenho
+            totalAttempts = 0;
+            correctMatches = 0;
+            gameStartTime = Date.now();
+            
+            // Reset das estatísticas dos jogadores
+            playerStats = {
+                1: {
+                    attempts: 0,
+                    matches: 0,
+                    streak: 0,
+                    maxStreak: 0,
+                    totalTime: 0,
+                    lastMoveTime: 0,
+                    moveTimes: []
+                },
+                2: {
+                    attempts: 0,
+                    matches: 0,
+                    streak: 0,
+                    maxStreak: 0,
+                    totalTime: 0,
+                    lastMoveTime: 0,
+                    moveTimes: []
+                }
+            };
+            
+            // Reset dos bônus da roleta
+            activeBonus = null;
+            doublePointsNext = false;
+            bonusCoins = 0;
+            
+            // Inicia o timer
+            startGameTimer();
+            
+            // Mostra painel de desempenho
+            document.getElementById('performance-panel').classList.remove('hidden');
+            
+            updatePlayerDisplay();
+            updatePerformanceDisplay();
+            messageElement.textContent = gameMode === 'single' ? "Encontre todos os pares!" : "Robo Akira - Sua vez!";
+            roundElement.textContent = "0";
+        }
+        
+        function startGameTimer() {
+            if (gameTimer) clearInterval(gameTimer);
+            
+            gameTimer = setInterval(() => {
+                const elapsed = Math.floor((Date.now() - gameStartTime) / 1000);
+                const minutes = Math.floor(elapsed / 60);
+                const seconds = elapsed % 60;
+                document.getElementById('game-timer').textContent = 
+                    `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            }, 1000);
+        }
+        
+        function updatePerformanceDisplay() {
+            document.getElementById('attempts-count').textContent = totalAttempts;
+            const accuracy = totalAttempts === 0 ? 100 : Math.round((correctMatches / totalAttempts) * 100);
+            document.getElementById('accuracy-rate').textContent = accuracy + '%';
+        }
+
+        function setGameMode(mode) {
+            gameMode = mode;
+            
+            // Atualiza botões
+            document.querySelectorAll('.mode-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Mostra/esconde painel de jogadores
+            const playersPanel = document.getElementById('players-panel');
+            if (mode === 'multiplayer') {
+                playersPanel.classList.remove('hidden');
+            } else {
+                playersPanel.classList.add('hidden');
+            }
+            
+            startNewGame();
+        }
+
+        function updatePlayerDisplay() {
+            if (gameMode === 'multiplayer') {
+                // Atualiza pontuações
+                document.getElementById('player1-score').textContent = player1Score;
+                document.getElementById('player2-score').textContent = player2Score;
+                
+                // Atualiza estatísticas detalhadas
+                updatePlayerStats(1);
+                updatePlayerStats(2);
+                
+                // Atualiza jogador ativo
+                document.getElementById('player1-info').classList.toggle('active', currentPlayer === 1);
+                document.getElementById('player2-info').classList.toggle('active', currentPlayer === 2);
+            }
+        }
+        
+        function updatePlayerStats(playerNum) {
+            const stats = playerStats[playerNum];
+            const accuracy = stats.attempts === 0 ? 100 : Math.round((stats.matches / stats.attempts) * 100);
+            const avgTime = stats.moveTimes.length === 0 ? 0 : 
+                Math.round(stats.moveTimes.reduce((a, b) => a + b, 0) / stats.moveTimes.length / 1000);
+            
+            // Atualiza elementos do DOM
+            document.getElementById(`player${playerNum}-streak`).textContent = stats.streak;
+            document.getElementById(`player${playerNum}-accuracy`).textContent = accuracy + '%';
+            document.getElementById(`player${playerNum}-avg-time`).textContent = avgTime + 's';
+            
+            // Atualiza indicador de sequência
+            const streakIndicator = document.getElementById(`player${playerNum}-streak-indicator`);
+            if (stats.streak >= 3) {
+                streakIndicator.className = 'streak-indicator streak-hot';
+                streakIndicator.textContent = `🔥`;
+            } else if (stats.streak >= 2) {
+                streakIndicator.className = 'streak-indicator streak-hot';
+                streakIndicator.textContent = `⚡`;
+            } else {
+                streakIndicator.className = 'streak-indicator streak-cold';
+                streakIndicator.textContent = '❄️';
+            }
+        }
+
+        function switchPlayer() {
+            if (gameMode === 'multiplayer') {
+                currentPlayer = currentPlayer === 1 ? 2 : 1;
+                updatePlayerDisplay();
+                const playerName = currentPlayer === 1 ? "Robo Akira" : "Robo Sakura";
+                messageElement.textContent = `${playerName} - Sua vez!`;
+            }
+        }
+
+        /**
+         * 3. Vira uma carta (adiciona classe face-up com animação)
+         */
+        function flipCardAnimation(card) {
+            card.style.transform = 'rotateY(90deg)';
+            setTimeout(() => {
+                card.classList.add('face-up');
+                card.style.transform = 'rotateY(0deg)';
+            }, 200);
+        }
+
+        /**
+         * 4. Desvira uma carta (remove classe face-up com animação)
+         */
+        function unflipCardAnimation(card) {
+            card.style.transform = 'rotateY(90deg)';
+            setTimeout(() => {
+                card.classList.remove('face-up');
+                card.style.transform = 'rotateY(0deg)';
+            }, 200);
+        }
+
+        /**
+         * 5. Verifica se duas cartas formam um par
+         */
+        function checkForMatch() {
+            const isMatch = firstCard.dataset.id === secondCard.dataset.id;
+            
+            // Conta a tentativa para o jogador atual
+            totalAttempts++;
+            playerStats[currentPlayer].attempts++;
+            
+            if (isMatch) {
+                correctMatches++;
+                disableCards();
+            } else {
+                unflipCards();
+            }
+            
+            // Atualiza display de desempenho
+            updatePerformanceDisplay();
+        }
+
+        /**
+         * 6. Desabilita cartas que formaram par (adiciona classe matched)
+         */
+        function disableCards() {
+            firstCard.removeEventListener('click', flipCard);
+            secondCard.removeEventListener('click', flipCard);
+            
+            // Adiciona classe de par encontrado
+            firstCard.classList.add('match');
+            secondCard.classList.add('match');
+            
+            // Atualiza estatísticas do jogador atual
+            const currentTime = Date.now();
+            const moveTime = currentTime - (playerStats[currentPlayer].lastMoveTime || gameStartTime);
+            
+            playerStats[currentPlayer].matches++;
+            playerStats[currentPlayer].streak++;
+            playerStats[currentPlayer].maxStreak = Math.max(playerStats[currentPlayer].maxStreak, playerStats[currentPlayer].streak);
+            playerStats[currentPlayer].moveTimes.push(moveTime);
+            playerStats[currentPlayer].lastMoveTime = currentTime;
+            
+            setTimeout(() => {
+                firstCard.classList.add('matched');
+                secondCard.classList.add('matched');
+                
+                matchesFound++;
+                playSFX(sfxCoin);
+                
+                // CHUVA ÉPICA DE MOEDAS DOURADAS quando acertar!
+                createEpicGoldenCoinRain();
+                
+                // Calcula pontos (com bônus se ativo)
+                let points = 1;
+                if (doublePointsNext) {
+                    points = 2;
+                    doublePointsNext = false;
+                    messageElement.textContent = "🔥 Pontos Dobrados! +2 pontos!";
+                }
+                
+                // Atualiza pontuação do jogador atual
+                if (gameMode === 'multiplayer') {
+                    if (currentPlayer === 1) {
+                        player1Score += points;
+                    } else {
+                        player2Score += points;
+                    }
+                    updatePlayerDisplay();
+                } else {
+                    player1Score += points;
+                }
+                
+                // Atualiza o contador de pares
+                roundElement.textContent = matchesFound;
+                
+                if (matchesFound === 6) {
+                    // Para o timer
+                    if (gameTimer) {
+                        clearInterval(gameTimer);
+                        gameTimer = null;
+                    }
+                    
+                    // Todos os pares foram encontrados!
+                    setTimeout(() => {
+                        playSFX(sfxWin);
+                        if (gameMode === 'multiplayer') {
+                            const winner = player1Score > player2Score ? 1 : 
+                                         player2Score > player1Score ? 2 : 'empate';
+                            if (winner === 'empate') {
+                                messageElement.textContent = "🎉 Empate! Vocês são ótimos robozinhos!";
+                            } else {
+                                const winnerName = winner === 1 ? "Robo Akira" : "Robo Sakura";
+                                messageElement.textContent = `🎉 ${winnerName} venceu!`;
+                            }
+                        } else {
+                            messageElement.textContent = "🎉 Parabéns! Você desvendou o mistério da puberdade!";
+                        }
+                        
+                        setTimeout(() => {
+                            endGame(true);
+                        }, 2000);
+                    }, 500);
+                }
+            }, 600);
+            
+            resetBoard();
+        }
+
+        /**
+         * 7. Desvira cartas que não formaram par
+         */
+        function unflipCards() {
+            lockBoard = true;
+            playSFX(sfxError);
+            
+            // BOMBA GIGANTE quando errar!
+            createMegaBombExplosion();
+            
+            // Atualiza estatísticas do jogador atual (erro)
+            playerStats[currentPlayer].streak = 0; // Quebra a sequência
+            playerStats[currentPlayer].lastMoveTime = Date.now();
+            
+            // Troca de jogador em modo multiplayer
+            if (gameMode === 'multiplayer') {
+                switchPlayer();
+            }
+            
+            setTimeout(() => {
+                unflipCardAnimation(firstCard);
+                unflipCardAnimation(secondCard);
+                resetBoard();
+            }, 1500);
+        }
+
+
+
+        /**
+         * 8. Reseta o estado do tabuleiro para próxima jogada
+         */
+        function resetBoard() {
+            // CORREÇÃO: Reajusta o estado do tabuleiro
+            [hasFlippedCard, lockBoard] = [false, false];
+            [firstCard, secondCard] = [null, null];
+            
+            messageElement.textContent = "Encontre o próximo par!";
+        }
+
+        /**
+         * 9. Finaliza o jogo após encontrar todos os pares.
+         */
+        function winGame() {
+            messageElement.textContent = "🎉 PARABÉNS! Você encontrou todos os pares!";
+            bgm.pause();
+            setTimeout(resetGame, 5000);
+        }
+
+        /**
+         * 10. Gerencia a ampliação (zoom) da carta clicada.
+         */
+        function handleZoom(card) {
+            if (card.classList.contains('zoomed-card')) {
+                handleZoomOff(card);
+            } else {
+                handleZoomOn(card);
+            }
+        }
+
+        function handleZoomOn(card) {
+            card.classList.add('zoomed-card');
+            playSFX(sfxMove); 
+            
+            card.removeEventListener('click', flipCard);
+            
+            lockBoard = true;
+            document.body.addEventListener('click', closeZoomGlobal);
+        }
+
+        function handleZoomOff(card) {
+            card.classList.remove('zoomed-card');
+            card.addEventListener('click', flipCard);
+            
+            lockBoard = false;
+            document.body.removeEventListener('click', closeZoomGlobal);
+        }
+
+        /**
+         * 11. Função auxiliar para fechar o zoom se o usuário clicar em qualquer lugar fora da carta ampliada.
+         */
+        function closeZoomGlobal(event) {
+            const zoomedCard = document.querySelector('.zoomed-card');
+            if (zoomedCard && !zoomedCard.contains(event.target)) {
+                handleZoomOff(zoomedCard);
+            }
+        }
+
+        /**
+         * Cria efeito de chuva de moedas
+         */
+        function createCoinRain() {
+            const coinRain = document.createElement('div');
+            coinRain.className = 'coin-rain';
+            document.body.appendChild(coinRain);
+            
+            for (let i = 0; i < 20; i++) {
+                const coin = document.createElement('div');
+                coin.className = 'coin';
+                coin.style.left = Math.random() * 100 + '%';
+                coin.style.animationDelay = Math.random() * 1 + 's';
+                coinRain.appendChild(coin);
+            }
+            
+            setTimeout(() => {
+                coinRain.remove();
+            }, 3000);
+        }
+
+        /**
+         * Cria efeito de explosão
+         */
+        function createExplosion() {
+            const explosion = document.createElement('div');
+            explosion.className = 'explosion';
+            document.body.appendChild(explosion);
+            
+            setTimeout(() => {
+                explosion.remove();
+            }, 1000);
+        }
+
+        /**
+         * Cria efeito de MEGA BOMBA quando errar
+         */
+        function createMegaBombExplosion() {
+            // Múltiplas explosões em sequência
+            for (let i = 0; i < 5; i++) {
+                setTimeout(() => {
+                    const explosion = document.createElement('div');
+                    explosion.className = 'mega-explosion';
+                    explosion.style.left = (Math.random() * 80 + 10) + '%';
+                    explosion.style.top = (Math.random() * 80 + 10) + '%';
+                    document.body.appendChild(explosion);
+                    
+                    setTimeout(() => {
+                        explosion.remove();
+                    }, 2000);
+                }, i * 200);
+            }
+            
+            // Efeito de tela tremendo
+            document.body.style.animation = 'shake 1s ease-in-out';
+            setTimeout(() => {
+                document.body.style.animation = '';
+            }, 1000);
+        }
+
+        /**
+         * Cria chuva ÉPICA de moedas douradas quando acertar
+         */
+        function createEpicGoldenCoinRain() {
+            const coinRain = document.createElement('div');
+            coinRain.className = 'epic-coin-rain';
+            document.body.appendChild(coinRain);
+            
+            // Cria 100 moedas douradas brilhantes
+            for (let i = 0; i < 100; i++) {
+                const coin = document.createElement('div');
+                coin.className = 'golden-coin';
+                coin.style.left = Math.random() * 100 + '%';
+                coin.style.animationDelay = Math.random() * 3 + 's';
+                coin.style.animationDuration = (2 + Math.random() * 3) + 's';
+                
+                // Adiciona brilho extra aleatório
+                if (Math.random() > 0.7) {
+                    coin.classList.add('super-sparkle');
+                }
+                
+                coinRain.appendChild(coin);
+            }
+            
+            // Remove após 6 segundos
+            setTimeout(() => {
+                coinRain.remove();
+            }, 6000);
+        }
+        
+        /**
+         * Mostra a roleta da sorte com prêmios reais
+         */
+        function showRoulette() {
+            const rouletteContainer = document.getElementById('roulette-container');
+            const wheel = document.querySelector('.roulette-wheel');
+            const prizeDisplay = document.getElementById('prize-display');
+            
+            rouletteContainer.style.display = 'flex';
+            prizeDisplay.classList.remove('show');
+            
+            // Remove animação anterior
+            wheel.classList.remove('roulette-spinning');
+            
+            // Inicia nova animação
+            setTimeout(() => {
+                wheel.classList.add('roulette-spinning');
+                playSFX(sfxMove);
+            }, 100);
+            
+            // Determina resultado após 4 segundos
+            setTimeout(() => {
+                const prizes = [
+                    {
+                        title: "🪙 Chuva de Moedas!",
+                        description: "Você ganhou +100 moedas bônus! Uma chuva dourada está caindo!",
+                        action: () => {
+                            bonusCoins += 100;
+                            createMegaCoinRain();
+                            playSFX(sfxCoin);
+                        }
+                    },
+                    {
+                        title: "⏰ Tempo Extra!",
+                        description: "Você ganhou +10 segundos! O tempo está do seu lado!",
+                        action: () => {
+                            gameStartTime += 10000;
+                            playSFX(sfxWin);
+                        }
+                    },
+                    {
+                        title: "🔥 Pontos Dobrados!",
+                        description: "Seu próximo par valerá 2x os pontos! Use com sabedoria!",
+                        action: () => {
+                            doublePointsNext = true;
+                            messageElement.textContent = "🔥 Próximo par vale DOBRADO!";
+                            playSFX(sfxWin);
+                        }
+                    },
+                    {
+                        title: "💎 Revelação Mágica!",
+                        description: "Um par será revelado por 3 segundos! Memorize bem!",
+                        action: () => {
+                            revealRandomPair();
+                            playSFX(sfxMove);
+                        }
+                    },
+                    {
+                        title: "🎯 Precisão Aprimorada!",
+                        description: "Sua precisão aumentou! Próximas 3 tentativas têm bônus de sorte!",
+                        action: () => {
+                            activeBonus = 'precision';
+                            messageElement.textContent = "🎯 Modo Precisão Ativado!";
+                            playSFX(sfxWin);
+                        }
+                    },
+                    {
+                        title: "🍀 Sorte Extra!",
+                        description: "A sorte está com você! Ganhe uma segunda chance no próximo erro!",
+                        action: () => {
+                            activeBonus = 'second_chance';
+                            messageElement.textContent = "🍀 Segunda Chance Ativada!";
+                            playSFX(sfxWin);
+                        }
+                    }
+                ];
+                
+                const randomPrize = prizes[Math.floor(Math.random() * prizes.length)];
+                
+                // Mostra resultado
+                document.getElementById('prize-title').textContent = randomPrize.title;
+                document.getElementById('prize-description').textContent = randomPrize.description;
+                prizeDisplay.classList.add('show');
+                
+                // Executa ação do prêmio
+                randomPrize.action();
+                
+            }, 4000);
+        }
+        
+        function closeRoulette() {
+            document.getElementById('roulette-container').style.display = 'none';
+        }
+        
+        function createMegaCoinRain() {
+            const coinRain = document.createElement('div');
+            coinRain.className = 'coin-rain';
+            document.body.appendChild(coinRain);
+            
+            // Cria 50 moedas para mega chuva
+            for (let i = 0; i < 50; i++) {
+                const coin = document.createElement('div');
+                coin.className = 'coin';
+                coin.style.left = Math.random() * 100 + '%';
+                coin.style.animationDelay = Math.random() * 2 + 's';
+                coin.style.animationDuration = (2 + Math.random() * 2) + 's';
+                coinRain.appendChild(coin);
+            }
+            
+            setTimeout(() => {
+                coinRain.remove();
+            }, 5000);
+        }
+        
+        function revealRandomPair() {
+            // Encontra cartas não combinadas
+            const unmatched = Array.from(document.querySelectorAll('.card:not(.matched)'));
+            if (unmatched.length < 2) return;
+            
+            // Encontra um par real
+            const cardGroups = {};
+            unmatched.forEach(card => {
+                const id = card.dataset.id;
+                if (!cardGroups[id]) cardGroups[id] = [];
+                cardGroups[id].push(card);
+            });
+            
+            // Pega o primeiro par disponível
+            const availablePairs = Object.values(cardGroups).filter(group => group.length >= 2);
+            if (availablePairs.length === 0) return;
+            
+            const pairToReveal = availablePairs[0].slice(0, 2);
+            
+            // Revela o par por 3 segundos
+            pairToReveal.forEach(card => {
+                card.classList.add('face-up');
+                card.style.border = '3px solid #ffd93d';
+                card.style.boxShadow = '0 0 20px #ffd93d';
+            });
+            
+            setTimeout(() => {
+                pairToReveal.forEach(card => {
+                    if (!card.classList.contains('matched')) {
+                        card.classList.remove('face-up');
+                        card.style.border = '3px solid transparent';
+                        card.style.boxShadow = '0 2px 5px rgba(0, 0, 0, 0.2)';
+                    }
+                });
+            }, 3000);
+        }
+
+        /**
+         * 12. Lida com o clique do jogador em uma carta (lógica de pares)
+         */
+        function flipCard(event) {
+            if (lockBoard) return;
+            
+            const card = event.currentTarget;
+            
+            // Não permite clicar na mesma carta duas vezes
+            if (card === firstCard) return;
+            
+            // Não permite clicar em cartas já combinadas
+            if (card.classList.contains('matched') || card.classList.contains('match')) return;
+            
+            // Vira a carta se ainda não estiver virada
+            if (!card.classList.contains('face-up')) {
+                flipCardAnimation(card);
+                playSFX(sfxMove);
+                
+                // Aplica zoom após virar
+                setTimeout(() => {
+                    handleZoom(card);
+                }, 300);
+                
+                if (!hasFlippedCard) {
+                    // Primeira carta clicada
+                    hasFlippedCard = true;
+                    firstCard = card;
+                } else {
+                    // Segunda carta clicada
+                    secondCard = card;
+                    checkForMatch();
+                }
+            } else {
+                // Se já está virada, apenas aplica zoom
+                handleZoom(card);
+            }
+        }
+
+        /**
+         * 5. Reseta o estado do jogo e o DOM.
+         */
+        function resetGame() {
+            // Reseta variáveis de pares
+            hasFlippedCard = false;
+            lockBoard = false;
+            firstCard = null;
+            secondCard = null;
+            matchesFound = 0;
+            gameStarted = false;
+
+            messageElement.textContent = "Clique para Iniciar";
+            roundElement.textContent = "0";
+            
+            // Reexibe a tela de capa (vídeo)
+            coverScreen.classList.remove('hidden');
+            gameContainer.classList.add('hidden');
+            
+            // Volta o vídeo para o início
+            introVideo.currentTime = 0;
+            bgm.pause();
+            
+            // Reexibe os botões de opção
+            optionOverlay.classList.remove('hide-options');
+            
+            // Recria as cartas para a próxima rodada
+            createCards();
+        }
+
+        function endGame(won) {
+            lockBoard = true;
+
+            const gameOverDiv = document.createElement('div');
+            gameOverDiv.className = 'game-over';
+            
+            if (won) {
+                if (gameMode === 'multiplayer') {
+                    const winner = player1Score > player2Score ? 1 : 
+                                 player2Score > player1Score ? 2 : 'empate';
+                    const winnerName = winner === 1 ? "Robo Akira" : winner === 2 ? "Robo Sakura" : "Empate";
+                    gameOverDiv.innerHTML = `
+                        <h2>🎉 Jogo Finalizado!</h2>
+                        <p>🤖 Robo Akira: ${player1Score} pares</p>
+                        <p>🤖 Robo Sakura: ${player2Score} pares</p>
+                        <p><strong>${winner === 'empate' ? '🤝 Empate!' : `🏆 ${winnerName} venceu!`}</strong></p>
+                        <button class="restart-btn" onclick="restartGame()">Jogar Novamente</button>
+                    `;
+                } else {
+                    gameOverDiv.innerHTML = `
+                        <h2>🎉 Parabéns!</h2>
+                        <p>Você encontrou todos os 6 pares!</p>
+                        <button class="restart-btn" onclick="restartGame()">Jogar Novamente</button>
+                    `;
+                }
+            } else {
+                gameOverDiv.innerHTML = `
+                    <h2>💥 Game Over!</h2>
+                    <p>Você encontrou ${matchesFound} de 6 pares!</p>
+                    <button class="restart-btn" onclick="restartGame()">Tentar Novamente</button>
+                `;
+            }
+            
+            gameContainer.appendChild(gameOverDiv);
+        }
+
+        function restartGame() {
+            const gameOver = document.querySelector('.game-over');
+            if (gameOver) {
+                gameOver.remove();
+            }
+            startNewGame();
+        }
+
+        // --- Funções do Robozinho Flutuante ---
+        function showStory() {
+            document.getElementById('story-modal').style.display = 'flex';
+        }
+
+        function closeStory() {
+            document.getElementById('story-modal').style.display = 'none';
+        }
+
+        function closeStoryAndStart() {
+            closeStory();
+            skipVideoAndStartGame();
+        }
+
+        // --- Elementos dos Botões ---
+        const watchButton = document.getElementById('watch-video');
+        const skipButton = document.getElementById('skip-video');
+        const optionOverlay = document.getElementById('option-overlay');
+
+        // Flag para garantir que o jogo só inicie uma vez
+        let gameStarted = false;
+
+        /**
+         * 13. Lógica de início de jogo (ativa após o vídeo/pular).
+         */
+        function startGameLogic() {
+            coverScreen.classList.add('hidden');
+            gameContainer.classList.remove('hidden');
+            
+            matchesFound = 0;
+            roundElement.textContent = `${matchesFound}`;
+            createCards(); 
+            resetBoard();
+            messageElement.textContent = "Encontre o primeiro par!";
+        }
+
+        /**
+         * 14. Reseta o estado do jogo (Volta para a tela de capa).
+         */
+        function resetGame() {
+            matchesFound = 0;
+
+            coverScreen.classList.remove('hidden');
+            gameContainer.classList.add('hidden');
+            
+            introVideo.currentTime = 0;
+            optionOverlay.classList.remove('hide-options');
+            bgm.pause();
+
+            gameStarted = false;
+        }
+
+        /**
+         * 15. Função para pular o vídeo e iniciar o jogo.
+         */
+        function skipVideoAndStartGame() {
+            if (gameStarted) return;
+            gameStarted = true;
+            
+            bgm.volume = 0.3; 
+            bgm.play().catch(e => console.log("Falha ao tocar BGM:", e));
+            
+            introVideo.pause();
+            introVideo.currentTime = 0;
+            
+            startGameLogic();
+        }
+
+        /**
+         * 16. Função para iniciar o vídeo.
+         */
+        function startVideo() {
+            if (gameStarted) return;
+            
+            optionOverlay.classList.add('hide-options');
+            
+            introVideo.play().catch(e => {
+                console.log("Erro ao tocar vídeo. Pulando para o jogo.", e);
+                skipVideoAndStartGame(); 
+                return;
+            });
+            
+            bgm.volume = 0.3; 
+            bgm.play().catch(e => console.log("Falha ao tocar BGM:", e));
+            
+            introVideo.addEventListener('ended', skipVideoAndStartGame);
+        }
+
+        // --- Inicialização e Atribuição de Eventos ---
+
+        createCards();
+
+        // Atribui os eventos de clique aos botões
+        watchButton.addEventListener('click', startVideo);
+        skipButton.addEventListener('click', skipVideoAndStartGame);
+
+        // Integração com Element SDK
+        async function onConfigChange(config) {
+            const gameTitle = document.getElementById('game-title');
+            const startMessage = document.getElementById('start-message');
+            
+            if (gameTitle) {
+                gameTitle.textContent = config.game_title || defaultConfig.game_title;
+            }
+            if (startMessage) {
+                startMessage.textContent = config.start_message || defaultConfig.start_message;
+            }
+        }
+
+        function mapToCapabilities(config) {
+            return {
+                recolorables: [],
+                borderables: [],
+                fontEditable: undefined,
+                fontSizeable: undefined
+            };
+        }
+
+        function mapToEditPanelValues(config) {
+            return new Map([
+                ["game_title", config.game_title || defaultConfig.game_title],
+                ["start_message", config.start_message || defaultConfig.start_message],
+                ["observe_message", config.observe_message || defaultConfig.observe_message],
+                ["your_turn_message", config.your_turn_message || defaultConfig.your_turn_message]
+            ]);
+        }
+
+        // Inicializa Element SDK
+        if (window.elementSdk) {
+            window.elementSdk.init({
+                defaultConfig,
+                onConfigChange,
+                mapToCapabilities,
+                mapToEditPanelValues
+            });
+        }
+    </script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99888659c125f203',t:'MTc2MjEzNzgxNC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
