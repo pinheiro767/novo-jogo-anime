@@ -618,15 +618,15 @@
             color: #4ecdc4;
         }
 
-        /* Mini Robôs Andando pela Página */
-        .floating-player {
+        /* Robôs Fixos nas Extremidades com Telas de Pontuação */
+        .fixed-player {
             position: fixed;
-            width: 120px;
-            height: 140px;
+            width: 140px;
+            height: 180px;
             background: rgba(255, 255, 255, 0.15);
             backdrop-filter: blur(15px);
             border: 3px solid rgba(255, 255, 255, 0.3);
-            border-radius: 20px;
+            border-radius: 25px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -636,179 +636,84 @@
             transition: all 0.3s ease;
             color: white;
             text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+            top: 50%;
+            transform: translateY(-50%);
         }
 
-        .floating-player.active {
+        .fixed-player.player1 {
+            left: 20px;
             background: linear-gradient(145deg, #4ecdc4, #26a69a);
-            border-color: #ffffff;
-            transform: scale(1.1);
-            box-shadow: 0 12px 35px rgba(78, 205, 196, 0.6);
-            animation: playerWalkActive 8s linear infinite;
+            border-color: #00ff88;
         }
 
-        .floating-player.player1 {
-            animation: playerWalk1 12s linear infinite;
+        .fixed-player.player2 {
+            right: 20px;
+            background: linear-gradient(145deg, #9b59b6, #8e44ad);
+            border-color: #ff6b9d;
         }
 
-        .floating-player.player2 {
-            animation: playerWalk2 15s linear infinite;
+        .fixed-player.active {
+            transform: translateY(-50%) scale(1.1);
+            box-shadow: 0 12px 35px rgba(78, 205, 196, 0.8);
+            animation: playerGlow 2s ease-in-out infinite alternate;
         }
 
-        /* Animação de caminhada para Player 1 - Movimento em L */
-        @keyframes playerWalk1 {
+        @keyframes playerGlow {
             0% { 
-                top: 10%; 
-                left: 5%; 
-                transform: rotate(0deg) translateY(0px);
-            }
-            25% { 
-                top: 10%; 
-                left: 85%; 
-                transform: rotate(5deg) translateY(-10px);
-            }
-            50% { 
-                top: 70%; 
-                left: 85%; 
-                transform: rotate(0deg) translateY(0px);
-            }
-            75% { 
-                top: 70%; 
-                left: 5%; 
-                transform: rotate(-5deg) translateY(-10px);
+                box-shadow: 0 12px 35px rgba(78, 205, 196, 0.6);
+                filter: brightness(1.2);
             }
             100% { 
-                top: 10%; 
-                left: 5%; 
-                transform: rotate(0deg) translateY(0px);
-            }
-        }
-
-        /* Animação de caminhada para Player 2 - Movimento em 8 */
-        @keyframes playerWalk2 {
-            0% { 
-                top: 15%; 
-                left: 50%; 
-                transform: rotate(0deg) translateY(0px);
-            }
-            12.5% { 
-                top: 25%; 
-                left: 75%; 
-                transform: rotate(10deg) translateY(-8px);
-            }
-            25% { 
-                top: 45%; 
-                left: 85%; 
-                transform: rotate(0deg) translateY(0px);
-            }
-            37.5% { 
-                top: 65%; 
-                left: 75%; 
-                transform: rotate(-10deg) translateY(-8px);
-            }
-            50% { 
-                top: 75%; 
-                left: 50%; 
-                transform: rotate(0deg) translateY(0px);
-            }
-            62.5% { 
-                top: 65%; 
-                left: 25%; 
-                transform: rotate(10deg) translateY(-8px);
-            }
-            75% { 
-                top: 45%; 
-                left: 15%; 
-                transform: rotate(0deg) translateY(0px);
-            }
-            87.5% { 
-                top: 25%; 
-                left: 25%; 
-                transform: rotate(-10deg) translateY(-8px);
-            }
-            100% { 
-                top: 15%; 
-                left: 50%; 
-                transform: rotate(0deg) translateY(0px);
-            }
-        }
-
-        /* Animação especial quando ativo - movimento mais rápido e brilhante */
-        @keyframes playerWalkActive {
-            0% { 
-                filter: brightness(1.2) drop-shadow(0 0 15px #4ecdc4);
-                transform: scale(1.1) rotate(0deg);
-            }
-            25% { 
-                filter: brightness(1.5) drop-shadow(0 0 25px #4ecdc4);
-                transform: scale(1.15) rotate(5deg);
-            }
-            50% { 
-                filter: brightness(1.3) drop-shadow(0 0 20px #4ecdc4);
-                transform: scale(1.1) rotate(0deg);
-            }
-            75% { 
-                filter: brightness(1.5) drop-shadow(0 0 25px #4ecdc4);
-                transform: scale(1.15) rotate(-5deg);
-            }
-            100% { 
-                filter: brightness(1.2) drop-shadow(0 0 15px #4ecdc4);
-                transform: scale(1.1) rotate(0deg);
+                box-shadow: 0 15px 45px rgba(78, 205, 196, 1);
+                filter: brightness(1.5);
             }
         }
 
         .player-avatar {
-            font-size: 2.5em;
-            margin-bottom: 5px;
-            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+            font-size: 3em;
+            margin-bottom: 8px;
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
         }
 
-        .floating-player h3 {
-            margin: 0 0 5px 0;
+        .fixed-player h3 {
+            margin: 0 0 8px 0;
+            font-size: 1em;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        .coin-display {
+            background: linear-gradient(145deg, #ffd700, #ffb347);
+            color: #333;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 1.1em;
+            font-weight: bold;
+            margin-bottom: 8px;
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            min-width: 80px;
+            justify-content: center;
+        }
+
+        .pairs-found {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 15px;
             font-size: 0.9em;
             font-weight: bold;
+            margin-bottom: 5px;
             text-align: center;
         }
 
-        .floating-player .score {
-            font-size: 1.8em;
-            font-weight: bold;
-            margin-bottom: 3px;
-        }
-
-        .player-stats {
-            font-size: 0.7em;
+        .player-status {
+            font-size: 0.8em;
             opacity: 0.9;
             text-align: center;
-            line-height: 1.2;
-        }
-
-        .player-stats div {
-            margin: 1px 0;
-        }
-
-        .streak-indicator {
-            display: inline-block;
-            padding: 1px 6px;
-            border-radius: 8px;
-            font-size: 0.7em;
-            font-weight: bold;
-            margin-top: 3px;
-        }
-
-        .streak-hot {
-            background: linear-gradient(45deg, #ff6b6b, #ff8e53);
-            color: white;
-            animation: pulse 1s infinite;
-        }
-
-        .streak-cold {
-            background: rgba(255, 255, 255, 0.2);
-            color: #ccc;
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
+            font-style: italic;
         }
 
         /* Oculta painel tradicional */
@@ -2075,41 +1980,7 @@
             to { transform: rotateY(360deg); }
         }
 
-        /* Botão de Som */
-        .sound-toggle-btn {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: linear-gradient(145deg, #4ecdc4, #26a69a);
-            color: white;
-            border: 3px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            width: 60px;
-            height: 60px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            z-index: 1100;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-            display: flex !important;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5em;
-        }
 
-        .sound-toggle-btn:hover {
-            transform: translateY(-3px) scale(1.1);
-            box-shadow: 0 8px 25px rgba(78, 205, 196, 0.5);
-            border-color: #ffffff;
-        }
-
-        .sound-toggle-btn.muted {
-            background: linear-gradient(145deg, #e74c3c, #c0392b);
-            border-color: rgba(255, 255, 255, 0.3);
-        }
-
-        .sound-toggle-btn.muted:hover {
-            box-shadow: 0 8px 25px rgba(231, 76, 60, 0.5);
-        }
 
         /* Efeitos de Compra */
         .purchase-effect {
@@ -2173,13 +2044,7 @@
                 font-size: 0.9em;
             }
             
-            .sound-toggle-btn {
-                top: 15px;
-                right: 15px;
-                width: 50px;
-                height: 50px;
-                font-size: 1.3em;
-            }
+
         }
 
         @media (max-width: 480px) {
@@ -2221,13 +2086,7 @@
                 font-size: 0.8em;
             }
             
-            .sound-toggle-btn {
-                top: 12px;
-                right: 12px;
-                width: 45px;
-                height: 45px;
-                font-size: 1.2em;
-            }
+
         }
 
         /* Responsividade Aprimorada para Todos os Dispositivos */
@@ -2248,9 +2107,17 @@
                 height: 140px;
             }
             
-            .floating-player {
-                width: 110px;
-                height: 130px;
+            .fixed-player {
+                width: 120px;
+                height: 160px;
+            }
+            
+            .fixed-player.player1 {
+                left: 15px;
+            }
+            
+            .fixed-player.player2 {
+                right: 15px;
             }
         }
 
@@ -2290,9 +2157,17 @@
                 height: 270px !important;
             }
             
-            .floating-player {
+            .fixed-player {
                 width: 100px;
-                height: 120px;
+                height: 140px;
+            }
+            
+            .fixed-player.player1 {
+                left: 10px;
+            }
+            
+            .fixed-player.player2 {
+                right: 10px;
             }
             
             .player-avatar {
@@ -2371,9 +2246,17 @@
                 padding: 12px;
             }
             
-            .floating-player {
+            .fixed-player {
                 width: 90px;
-                height: 110px;
+                height: 120px;
+            }
+            
+            .fixed-player.player1 {
+                left: 8px;
+            }
+            
+            .fixed-player.player2 {
+                right: 8px;
             }
             
             .player-avatar {
@@ -2439,21 +2322,35 @@
                 gap: 8px;
             }
             
-            .floating-player {
+            .fixed-player {
                 width: 80px;
                 height: 100px;
             }
             
-            .floating-player h3 {
+            .fixed-player.player1 {
+                left: 5px;
+            }
+            
+            .fixed-player.player2 {
+                right: 5px;
+            }
+            
+            .fixed-player h3 {
                 font-size: 0.8em;
             }
             
-            .floating-player .score {
-                font-size: 1.5em;
+            .coin-display {
+                font-size: 0.9em;
+                padding: 5px 10px;
             }
             
-            .player-stats {
-                font-size: 0.6em;
+            .pairs-found {
+                font-size: 0.8em;
+                padding: 3px 8px;
+            }
+            
+            .player-status {
+                font-size: 0.7em;
             }
             
             .player-avatar {
@@ -2582,21 +2479,35 @@
                 height: 180px !important;
             }
             
-            .floating-player {
+            .fixed-player {
                 width: 70px;
                 height: 90px;
             }
             
-            .floating-player h3 {
+            .fixed-player.player1 {
+                left: 3px;
+            }
+            
+            .fixed-player.player2 {
+                right: 3px;
+            }
+            
+            .fixed-player h3 {
                 font-size: 0.7em;
             }
             
-            .floating-player .score {
-                font-size: 1.3em;
+            .coin-display {
+                font-size: 0.8em;
+                padding: 4px 8px;
             }
             
-            .player-stats {
-                font-size: 0.55em;
+            .pairs-found {
+                font-size: 0.7em;
+                padding: 2px 6px;
+            }
+            
+            .player-status {
+                font-size: 0.6em;
             }
             
             .player-avatar {
@@ -2690,8 +2601,6 @@
    <audio id="sfx-error" src="audio/error.mp3"></audio>
    <audio id="sfx-move" src="audio/move.mp3"></audio><!-- Botão da Loja de Moedas -->
    <div class="coin-shop-btn hidden" id="coin-shop-btn" onclick="openCoinShop()"><span class="coin-icon">🪙</span> <span id="coin-count">0</span>
-   </div><!-- Botão de Som -->
-   <div class="sound-toggle-btn" id="sound-toggle-btn" onclick="toggleSound()"><span id="sound-icon">🔊</span>
    </div><!-- Loja de Moedas -->
    <div class="coin-shop" id="coin-shop">
     <div class="shop-content">
@@ -2729,45 +2638,33 @@
        <p>Akira vs Sakura</p>
       </div>
      </div>
-    </div><!-- Mini Robôs Flutuantes -->
-    <div class="floating-player player1 active hidden" id="player1-info">
+    </div><!-- Robôs Fixos nas Extremidades -->
+    <div class="fixed-player player1 active hidden" id="player1-info">
      <div class="player-avatar">
       🤖
      </div>
-     <h3>Akira</h3>
-     <div class="score" id="player1-score">
-      0
+     <h3>Robo Akira</h3>
+     <div class="coin-display"><span>🪙</span> <span id="player1-coins">0</span>
      </div>
-     <div class="player-stats">
-      <div>
-       ⚡<span id="player1-streak">0</span> 🎯<span id="player1-accuracy">100%</span>
-      </div>
-      <div>
-       ⏱️<span id="player1-avg-time">0s</span>
-      </div>
+     <div class="pairs-found">
+      Pares: <span id="player1-pairs">0</span>/4
      </div>
-     <div class="streak-indicator streak-cold" id="player1-streak-indicator">
-      ❄️
+     <div class="player-status" id="player1-status">
+      Aguardando...
      </div>
     </div>
-    <div class="floating-player player2 hidden" id="player2-info">
+    <div class="fixed-player player2 hidden" id="player2-info">
      <div class="player-avatar">
       🤖
      </div>
-     <h3>Sakura</h3>
-     <div class="score" id="player2-score">
-      0
+     <h3>Robo Sakura</h3>
+     <div class="coin-display"><span>🪙</span> <span id="player2-coins">0</span>
      </div>
-     <div class="player-stats">
-      <div>
-       ⚡<span id="player2-streak">0</span> 🎯<span id="player2-accuracy">100%</span>
-      </div>
-      <div>
-       ⏱️<span id="player2-avg-time">0s</span>
-      </div>
+     <div class="pairs-found">
+      Pares: <span id="player2-pairs">0</span>/4
      </div>
-     <div class="streak-indicator streak-cold" id="player2-streak-indicator">
-      ❄️
+     <div class="player-status" id="player2-status">
+      Aguardando...
      </div>
     </div>
     <div id="info" style="background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 15px; padding: 15px; margin-bottom: 20px; color: white; text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);">
@@ -2912,10 +2809,12 @@
         let lockBoard = false;
         let firstCard = null;
         let secondCard = null;
-        let matchesFound = 0; // Total de 6 pares
+        let matchesFound = 0; // Total de 4 pares
         let currentPlayer = 1; // Jogador atual (1 ou 2)
-        let player1Score = 0;
-        let player2Score = 0;
+        let player1Pairs = 0; // Pares encontrados pelo jogador 1
+        let player2Pairs = 0; // Pares encontrados pelo jogador 2
+        let player1Coins = 0; // Moedas do jogador 1
+        let player2Coins = 0; // Moedas do jogador 2
         let gameMode = 'single'; // 'single' ou 'multiplayer'
         
         // Variáveis de Desempenho
@@ -3023,8 +2922,12 @@
          */
         function playSFX(audio) {
             if (!soundEnabled) return; // Não toca som se estiver desabilitado
-            audio.currentTime = 0; 
-            audio.play().catch(e => console.log("Erro ao tocar SFX:", e));
+            try {
+                audio.currentTime = 0; 
+                audio.play().catch(e => console.log("Erro ao tocar SFX:", e));
+            } catch (e) {
+                console.log("Erro ao acessar áudio:", e);
+            }
         }
 
         /**
@@ -3038,15 +2941,28 @@
             if (soundEnabled) {
                 soundIcon.textContent = '🔊';
                 soundBtn.classList.remove('muted');
-                // Retoma música de fundo se o jogo estiver ativo
-                if (!coverScreen.classList.contains('hidden')) {
-                    bgm.play().catch(e => console.log("Erro ao retomar BGM:", e));
+                // Retoma música de fundo se o jogo estiver ativo (tela de capa oculta)
+                if (coverScreen && coverScreen.classList.contains('hidden')) {
+                    try {
+                        bgm.volume = 0.3;
+                        bgm.play().catch(e => console.log("Erro ao retomar BGM:", e));
+                    } catch (e) {
+                        console.log("Erro ao acessar BGM:", e);
+                    }
                 }
             } else {
                 soundIcon.textContent = '🔇';
                 soundBtn.classList.add('muted');
-                // Para música de fundo
-                bgm.pause();
+                // Para TODOS os sons
+                try {
+                    bgm.pause();
+                    sfxCoin.pause();
+                    sfxWin.pause();
+                    sfxError.pause();
+                    sfxMove.pause();
+                } catch (e) {
+                    console.log("Erro ao pausar áudios:", e);
+                }
             }
         }
 
@@ -3109,8 +3025,10 @@
             secondCard = null;
             matchesFound = 0;
             currentPlayer = 1;
-            player1Score = 0;
-            player2Score = 0;
+            player1Pairs = 0;
+            player2Pairs = 0;
+            player1Coins = 0;
+            player2Coins = 0;
             
             // Reset das variáveis de desempenho
             totalAttempts = 0;
@@ -3225,13 +3143,25 @@
 
         function updatePlayerDisplay() {
             if (gameMode === 'multiplayer') {
-                // Atualiza pontuações
-                document.getElementById('player1-score').textContent = player1Score;
-                document.getElementById('player2-score').textContent = player2Score;
+                // Atualiza pares encontrados
+                document.getElementById('player1-pairs').textContent = player1Pairs;
+                document.getElementById('player2-pairs').textContent = player2Pairs;
                 
-                // Atualiza estatísticas detalhadas
-                updatePlayerStats(1);
-                updatePlayerStats(2);
+                // Atualiza moedas
+                document.getElementById('player1-coins').textContent = player1Coins;
+                document.getElementById('player2-coins').textContent = player2Coins;
+                
+                // Atualiza status dos jogadores
+                const player1Status = document.getElementById('player1-status');
+                const player2Status = document.getElementById('player2-status');
+                
+                if (currentPlayer === 1) {
+                    player1Status.textContent = 'Sua vez!';
+                    player2Status.textContent = 'Aguardando...';
+                } else {
+                    player1Status.textContent = 'Aguardando...';
+                    player2Status.textContent = 'Sua vez!';
+                }
                 
                 // Atualiza jogador ativo
                 document.getElementById('player1-info').classList.toggle('active', currentPlayer === 1);
@@ -3239,30 +3169,7 @@
             }
         }
         
-        function updatePlayerStats(playerNum) {
-            const stats = playerStats[playerNum];
-            const accuracy = stats.attempts === 0 ? 100 : Math.round((stats.matches / stats.attempts) * 100);
-            const avgTime = stats.moveTimes.length === 0 ? 0 : 
-                Math.round(stats.moveTimes.reduce((a, b) => a + b, 0) / stats.moveTimes.length / 1000);
-            
-            // Atualiza elementos do DOM
-            document.getElementById(`player${playerNum}-streak`).textContent = stats.streak;
-            document.getElementById(`player${playerNum}-accuracy`).textContent = accuracy + '%';
-            document.getElementById(`player${playerNum}-avg-time`).textContent = avgTime + 's';
-            
-            // Atualiza indicador de sequência
-            const streakIndicator = document.getElementById(`player${playerNum}-streak-indicator`);
-            if (stats.streak >= 3) {
-                streakIndicator.className = 'streak-indicator streak-hot';
-                streakIndicator.textContent = `🔥`;
-            } else if (stats.streak >= 2) {
-                streakIndicator.className = 'streak-indicator streak-hot';
-                streakIndicator.textContent = `⚡`;
-            } else {
-                streakIndicator.className = 'streak-indicator streak-cold';
-                streakIndicator.textContent = '❄️';
-            }
-        }
+
 
         function switchPlayer() {
             if (gameMode === 'multiplayer') {
@@ -3335,27 +3242,12 @@
             firstCard.classList.add('match');
             secondCard.classList.add('match');
             
-            // Atualiza estatísticas do jogador atual
-            const currentTime = Date.now();
-            const moveTime = currentTime - (playerStats[currentPlayer].lastMoveTime || gameStartTime);
-            
-            playerStats[currentPlayer].matches++;
-            playerStats[currentPlayer].streak++;
-            playerStats[currentPlayer].maxStreak = Math.max(playerStats[currentPlayer].maxStreak, playerStats[currentPlayer].streak);
-            playerStats[currentPlayer].moveTimes.push(moveTime);
-            playerStats[currentPlayer].lastMoveTime = currentTime;
-            
             // EXPLOSÃO IMEDIATA DE MOEDAS quando acertar!
             playSFX(sfxCoin);
             createEpicGoldenCoinRain();
             
             // Ganha moedas por acertar
             let coinsEarned = 50; // Base de 50 moedas por par
-            
-            // Bônus de moedas baseado na sequência
-            if (playerStats[currentPlayer].streak >= 3) {
-                coinsEarned += 25; // Bônus de sequência
-            }
             
             // Bônus de moedas duplas se ativo
             if (activeBonus === 'double_coins') {
@@ -3369,7 +3261,16 @@
                 }
             }
             
-            addCoins(coinsEarned);
+            // Adiciona moedas ao jogador atual
+            if (gameMode === 'multiplayer') {
+                if (currentPlayer === 1) {
+                    player1Coins += coinsEarned;
+                } else {
+                    player2Coins += coinsEarned;
+                }
+            } else {
+                addCoins(coinsEarned);
+            }
             
             setTimeout(() => {
                 firstCard.classList.add('matched');
@@ -3377,69 +3278,74 @@
                 
                 matchesFound++;
                 
-                // Calcula pontos (com bônus se ativo)
-                let points = 1;
-                if (doublePointsNext) {
-                    points = 2;
-                    doublePointsNext = false;
-                    messageElement.textContent = "🔥 Pontos Dobrados! +2 pontos!";
-                }
-                
-                // Atualiza pontuação do jogador atual
+                // Atualiza pares do jogador atual
                 if (gameMode === 'multiplayer') {
                     if (currentPlayer === 1) {
-                        player1Score += points;
+                        player1Pairs++;
                     } else {
-                        player2Score += points;
+                        player2Pairs++;
                     }
                     updatePlayerDisplay();
-                } else {
-                    player1Score += points;
                 }
                 
                 // Atualiza o contador de pares
                 roundElement.textContent = matchesFound;
                 
+                // VERIFICA VITÓRIA AUTOMÁTICA - TODOS OS 4 PARES ENCONTRADOS
                 if (matchesFound === 4) {
-                    // Para o timer do jogo
+                    // Para o timer do jogo IMEDIATAMENTE
                     if (gameTimer) {
                         clearInterval(gameTimer);
                         gameTimer = null;
                     }
                     
-                    // Bônus de conclusão do jogo
-                    addCoins(200);
+                    // Bloqueia o tabuleiro COMPLETAMENTE
+                    lockBoard = true;
                     
-                    // CELEBRAÇÃO ÉPICA DE VITÓRIA GARANTIDA!
-                    setTimeout(() => {
-                        if (gameMode === 'multiplayer') {
-                            const winner = player1Score > player2Score ? 1 : 
-                                         player2Score > player1Score ? 2 : 'empate';
-                            if (winner === 'empate') {
-                                createVictoryCelebration(
-                                    "🤝 EMPATE ÉPICO!",
-                                    "Akira e Sakura são campeões juntos! 🤖✨"
-                                );
-                            } else {
-                                const winnerName = winner === 1 ? "ROBO AKIRA" : "ROBO SAKURA";
-                                const winnerEmoji = winner === 1 ? "🤖⚡" : "🤖🌸";
-                                createVictoryCelebration(
-                                    `🏆 ${winnerName} VENCEU! 🏆`,
-                                    `Campeão da Memória Anime! ${winnerEmoji}`
-                                );
-                            }
-                        } else {
-                            // MODO SOLO - TROFÉU GARANTIDO!
+                    // Determina o vencedor e mostra celebração
+                    if (gameMode === 'multiplayer') {
+                        // Bônus de vitória para ambos
+                        player1Coins += 300;
+                        player2Coins += 300;
+                        
+                        // Determina vencedor por pares encontrados
+                        if (player1Pairs > player2Pairs) {
+                            player1Coins += 200; // Bônus extra para o vencedor
+                            updatePlayerDisplay();
                             createVictoryCelebration(
-                                "🏆 VITÓRIA ÉPICA! 🏆",
-                                "Você desvendou o mistério da puberdade! 🌟🎮"
+                                "🏆 ROBO AKIRA VENCEU! 🏆",
+                                `Encontrou ${player1Pairs} pares! 🤖⚡ (${player1Coins} moedas)`
+                            );
+                        } else if (player2Pairs > player1Pairs) {
+                            player2Coins += 200; // Bônus extra para o vencedor
+                            updatePlayerDisplay();
+                            createVictoryCelebration(
+                                "🏆 ROBO SAKURA VENCEU! 🏆",
+                                `Encontrou ${player2Pairs} pares! 🤖🌸 (${player2Coins} moedas)`
+                            );
+                        } else {
+                            updatePlayerDisplay();
+                            createVictoryCelebration(
+                                "🤝 EMPATE ÉPICO!",
+                                `Akira e Sakura empataram! 🤖✨ (${player1Pairs} x ${player2Pairs} pares)`
                             );
                         }
-                    }, 500);
+                    } else {
+                        // MODO SOLO - Bônus de conclusão
+                        addCoins(500);
+                        
+                        // TROFÉU GIGANTE GARANTIDO!
+                        createVictoryCelebration(
+                            "🏆 VITÓRIA ÉPICA! 🏆",
+                            "Você desvendou o mistério da puberdade! 🌟🎮"
+                        );
+                    }
+                    return; // Para aqui - não executa resetBoard
                 }
+                
+                // Se ainda há pares para encontrar, continua o jogo
+                resetBoard();
             }, 600);
-            
-            resetBoard();
         }
 
         /**
@@ -3629,33 +3535,20 @@
                 gameTimer = null;
             }
             
+            // Bloqueia completamente o jogo
+            lockBoard = true;
+            
             // Toca som de vitória épico
             playSFX(sfxWin);
             
             // Cria container principal da celebração
             const celebration = document.createElement('div');
             celebration.className = 'victory-celebration';
-            celebration.style.cssText = `
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: radial-gradient(circle, rgba(255, 215, 0, 0.3), rgba(255, 140, 0, 0.2), transparent);
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: center;
-                z-index: 2000;
-                pointer-events: none;
-                animation: victoryGlow 3s ease-in-out infinite alternate;
-            `;
-            
             celebration.innerHTML = `
-                <div class="trophy-container" style="display: flex; flex-direction: column; align-items: center; animation: trophyEntrance 2s ease-out;">
-                    <div class="mega-trophy" style="font-size: 8em; text-shadow: 0 0 30px #ffd700, 0 0 60px #ffed4e, 0 0 90px #fff; animation: trophySpin 4s ease-in-out infinite; margin-bottom: 20px;">🏆</div>
-                    <div class="victory-title" style="font-size: 3.5em; font-weight: bold; color: #ffd700; text-shadow: 0 0 20px #ffd700, 0 0 40px #ffed4e, 0 0 60px #fff, 2px 2px 4px rgba(0, 0, 0, 0.5); animation: victoryTextPulse 2s ease-in-out infinite alternate; margin-bottom: 15px; text-align: center;">${winnerText}</div>
-                    <div class="victory-subtitle" style="font-size: 1.8em; color: #fff; text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8); text-align: center; margin-bottom: 30px; animation: subtitleFloat 3s ease-in-out infinite;">${subtitleText}</div>
+                <div class="trophy-container">
+                    <div class="mega-trophy">🏆</div>
+                    <div class="victory-title">${winnerText}</div>
+                    <div class="victory-subtitle">${subtitleText}</div>
                 </div>
             `;
             document.body.appendChild(celebration);
@@ -3681,7 +3574,9 @@
             
             // Remove celebração após 8 segundos e mostra tela de fim
             setTimeout(() => {
-                celebration.remove();
+                if (celebration && celebration.parentNode) {
+                    celebration.remove();
+                }
                 endGame(true);
             }, 8000);
         }
@@ -4462,14 +4357,14 @@
             if (gameMode !== 'multiplayer') return;
             
             const opponent = currentPlayer === 1 ? 2 : 1;
-            if (opponent === 1 && player1Score > 0) {
-                player1Score--;
-                messageElement.textContent = `💥 Robo Akira perdeu 1 ponto!`;
-            } else if (opponent === 2 && player2Score > 0) {
-                player2Score--;
-                messageElement.textContent = `💥 Robo Sakura perdeu 1 ponto!`;
+            if (opponent === 1 && player1Coins > 0) {
+                player1Coins = Math.max(0, player1Coins - 100);
+                messageElement.textContent = `💥 Robo Akira perdeu 100 moedas!`;
+            } else if (opponent === 2 && player2Coins > 0) {
+                player2Coins = Math.max(0, player2Coins - 100);
+                messageElement.textContent = `💥 Robo Sakura perdeu 100 moedas!`;
             } else {
-                messageElement.textContent = `💥 Oponente não tem pontos para perder!`;
+                messageElement.textContent = `💥 Oponente não tem moedas para perder!`;
             }
             
             updatePlayerDisplay();
@@ -4623,5 +4518,5 @@
             });
         }
     </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9990978c52219ad4',t:'MTc2MjIyMjQwNC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'99910ddd908dfe12',t:'MTc2MjIyNzI1MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
