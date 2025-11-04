@@ -121,8 +121,29 @@
             font-size: 1.2em;
             color: rgba(255, 255, 255, 0.9);
             text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-            margin: 10px 0 0 0;
+            margin: 10px 0 15px 0;
             font-style: italic;
+        }
+
+        .instructions-btn {
+            background: linear-gradient(145deg, #4ecdc4, #26a69a);
+            color: white;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 25px;
+            padding: 12px 25px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            margin-top: 10px;
+        }
+
+        .instructions-btn:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 12px 35px rgba(78, 205, 196, 0.6);
+            border-color: #ffffff;
         }
 
         @keyframes gradientShift {
@@ -2601,7 +2622,7 @@
   <main>
    <div class="main-title">
     <h1>O Jogo da Puberdade</h1>
-    <p>Aprenda com a História de Quatro Jovens em Anime</p>
+    <p>Aprenda com a História de Quatro Jovens em Anime</p><button class="instructions-btn" onclick="showInstructions()"> 📖 Clique Aqui - Como Jogar </button>
    </div>
    <div id="cover-screen">
     <video id="intro-video" width="100%" height="100%"><source src="video/Puberdade_Clique_No_Jogo.mp4" type="video/mp4"> Seu navegador não suporta a tag de vídeo.
@@ -2734,6 +2755,32 @@
    <div class="story-modal" id="video-modal" style="display: none; align-items: center; justify-content: center;" onclick="closeVideoModal()">
     <video id="robot-story-video" width="100%" height="100%" controls autoplay style="object-fit: contain; max-height: 90vh; max-width: 90vw; z-index: 1002;" onclick="event.stopPropagation();"><source src="video/video-anime.mp4" type="video/mp4"> Seu navegador não suporta a tag de vídeo.
     </video><button class="close-story" onclick="closeVideoModal()" style="position: absolute; top: 10px; right: 10px; z-index: 1003; color: white; font-size: 2em; background: rgba(0,0,0,0.8); border: none; border-radius: 50%; width: 50px; height: 50px; cursor: pointer; display: flex; align-items: center; justify-content: center;">×</button>
+   </div><!-- Modal de Instruções -->
+   <div class="story-modal" id="instructions-modal" style="display: none;">
+    <div class="story-content"><button class="close-story" onclick="closeInstructions()">×</button>
+     <div class="story-header"><span class="robot-emoji">🎮</span>
+      <h2>Como Jogar - O Jogo da Puberdade</h2>
+     </div>
+     <div class="story-text">
+      <div class="story-highlight"><strong>🤖 Acompanhe a história dos quatro personagens clicando no robozinho!</strong>
+      </div>
+      <h3>🎯 Objetivo do Jogo:</h3>
+      <p>Você deverá juntar os <strong>pares corretos</strong> - uma pergunta com sua resposta correspondente sobre puberdade e desenvolvimento dos personagens.</p>
+      <h3>🕹️ Como Jogar:</h3>
+      <p><strong>1.</strong> Clique em duas cartas para revelá-las</p>
+      <p><strong>2.</strong> Se formarem um par correto (pergunta + resposta), elas permanecerão viradas</p>
+      <p><strong>3.</strong> Se não formarem par, elas voltarão a ficar cobertas</p>
+      <p><strong>4.</strong> Continue até encontrar todos os 4 pares!</p>
+      <h3>🎮 Modos de Jogo:</h3>
+      <p><strong>Solo:</strong> Jogue sozinho contra o tempo</p>
+      <p><strong>Dupla:</strong> Robo Akira vs Robo Sakura - quem encontrar mais pares vence!</p>
+      <h3>💡 Dicas Especiais:</h3>
+      <p><strong>👀 Espiar:</strong> Use o botão "Espiar" para ver todas as cartas por alguns segundos</p>
+      <p><strong>🎰 Roleta da Sorte:</strong> Gire para ganhar bônus incríveis</p>
+      <p><strong>🪙 Loja de Moedas:</strong> Compre poderes especiais com as moedas que ganhar</p>
+      <p><strong>🤖 Robozinho:</strong> Clique no robozinho flutuante para assistir a história completa</p>
+     </div><button class="start-game-btn" onclick="closeInstructions()">Entendi! Vamos Jogar! 🚀</button>
+    </div>
    </div><!-- Roleta 3D Aprimorada -->
    <div id="roulette-container">
     <h2 class="roulette-title">🎰 ROLETA DA SORTE 🎰</h2>
@@ -3273,10 +3320,16 @@
                 roundElement.textContent = matchesFound;
                 
                 if (matchesFound === 4) {
+                    // Para o timer do jogo
+                    if (gameTimer) {
+                        clearInterval(gameTimer);
+                        gameTimer = null;
+                    }
+                    
                     // Bônus de conclusão do jogo
                     addCoins(200);
                     
-                    // CELEBRAÇÃO ÉPICA DE VITÓRIA!
+                    // CELEBRAÇÃO ÉPICA DE VITÓRIA GARANTIDA!
                     setTimeout(() => {
                         if (gameMode === 'multiplayer') {
                             const winner = player1Score > player2Score ? 1 : 
@@ -3295,8 +3348,9 @@
                                 );
                             }
                         } else {
+                            // MODO SOLO - TROFÉU GARANTIDO!
                             createVictoryCelebration(
-                                "🎉 VITÓRIA ÉPICA! 🎉",
+                                "🏆 VITÓRIA ÉPICA! 🏆",
                                 "Você desvendou o mistério da puberdade! 🌟🎮"
                             );
                         }
@@ -3500,11 +3554,27 @@
             // Cria container principal da celebração
             const celebration = document.createElement('div');
             celebration.className = 'victory-celebration';
+            celebration.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: radial-gradient(circle, rgba(255, 215, 0, 0.3), rgba(255, 140, 0, 0.2), transparent);
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                z-index: 2000;
+                pointer-events: none;
+                animation: victoryGlow 3s ease-in-out infinite alternate;
+            `;
+            
             celebration.innerHTML = `
-                <div class="trophy-container">
-                    <div class="mega-trophy">🏆</div>
-                    <div class="victory-title">${winnerText}</div>
-                    <div class="victory-subtitle">${subtitleText}</div>
+                <div class="trophy-container" style="display: flex; flex-direction: column; align-items: center; animation: trophyEntrance 2s ease-out;">
+                    <div class="mega-trophy" style="font-size: 8em; text-shadow: 0 0 30px #ffd700, 0 0 60px #ffed4e, 0 0 90px #fff; animation: trophySpin 4s ease-in-out infinite; margin-bottom: 20px;">🏆</div>
+                    <div class="victory-title" style="font-size: 3.5em; font-weight: bold; color: #ffd700; text-shadow: 0 0 20px #ffd700, 0 0 40px #ffed4e, 0 0 60px #fff, 2px 2px 4px rgba(0, 0, 0, 0.5); animation: victoryTextPulse 2s ease-in-out infinite alternate; margin-bottom: 15px; text-align: center;">${winnerText}</div>
+                    <div class="victory-subtitle" style="font-size: 1.8em; color: #fff; text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8); text-align: center; margin-bottom: 30px; animation: subtitleFloat 3s ease-in-out infinite;">${subtitleText}</div>
                 </div>
             `;
             document.body.appendChild(celebration);
@@ -4138,6 +4208,17 @@
             videoModal.style.display = 'none';
         }
 
+        // --- Funções do Modal de Instruções ---
+        function showInstructions() {
+            const instructionsModal = document.getElementById('instructions-modal');
+            instructionsModal.style.display = 'flex';
+        }
+
+        function closeInstructions() {
+            const instructionsModal = document.getElementById('instructions-modal');
+            instructionsModal.style.display = 'none';
+        }
+
         // --- Elementos dos Botões ---
         const watchButton = document.getElementById('watch-video');
         const skipButton = document.getElementById('skip-video');
@@ -4457,5 +4538,5 @@
             });
         }
     </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'998da6c6f2b49ad4',t:'MTc2MjE5MTU3MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'999030b0a504b3c6',t:'MTc2MjIxODE5MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
