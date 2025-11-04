@@ -2075,6 +2075,42 @@
             to { transform: rotateY(360deg); }
         }
 
+        /* Botão de Som */
+        .sound-toggle-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: linear-gradient(145deg, #4ecdc4, #26a69a);
+            color: white;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 1100;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            display: flex !important;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+        }
+
+        .sound-toggle-btn:hover {
+            transform: translateY(-3px) scale(1.1);
+            box-shadow: 0 8px 25px rgba(78, 205, 196, 0.5);
+            border-color: #ffffff;
+        }
+
+        .sound-toggle-btn.muted {
+            background: linear-gradient(145deg, #e74c3c, #c0392b);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .sound-toggle-btn.muted:hover {
+            box-shadow: 0 8px 25px rgba(231, 76, 60, 0.5);
+        }
+
         /* Efeitos de Compra */
         .purchase-effect {
             position: fixed;
@@ -2136,6 +2172,14 @@
                 padding: 10px 15px;
                 font-size: 0.9em;
             }
+            
+            .sound-toggle-btn {
+                top: 15px;
+                right: 15px;
+                width: 50px;
+                height: 50px;
+                font-size: 1.3em;
+            }
         }
 
         @media (max-width: 480px) {
@@ -2175,6 +2219,14 @@
             .coin-shop-btn {
                 padding: 8px 12px;
                 font-size: 0.8em;
+            }
+            
+            .sound-toggle-btn {
+                top: 12px;
+                right: 12px;
+                width: 45px;
+                height: 45px;
+                font-size: 1.2em;
             }
         }
 
@@ -2638,6 +2690,8 @@
    <audio id="sfx-error" src="audio/error.mp3"></audio>
    <audio id="sfx-move" src="audio/move.mp3"></audio><!-- Botão da Loja de Moedas -->
    <div class="coin-shop-btn hidden" id="coin-shop-btn" onclick="openCoinShop()"><span class="coin-icon">🪙</span> <span id="coin-count">0</span>
+   </div><!-- Botão de Som -->
+   <div class="sound-toggle-btn" id="sound-toggle-btn" onclick="toggleSound()"><span id="sound-icon">🔊</span>
    </div><!-- Loja de Moedas -->
    <div class="coin-shop" id="coin-shop">
     <div class="shop-content">
@@ -2900,6 +2954,9 @@
         // Sistema de Moedas
         let playerCoins = 100; // Jogadores começam com 100 moedas
         
+        // Sistema de Som
+        let soundEnabled = true;
+        
         // Itens da Loja
         const shopItems = [
             {
@@ -2965,8 +3022,32 @@
          * Função utilitária para tocar sons rapidamente.
          */
         function playSFX(audio) {
+            if (!soundEnabled) return; // Não toca som se estiver desabilitado
             audio.currentTime = 0; 
             audio.play().catch(e => console.log("Erro ao tocar SFX:", e));
+        }
+
+        /**
+         * Função para alternar som ligado/desligado
+         */
+        function toggleSound() {
+            soundEnabled = !soundEnabled;
+            const soundIcon = document.getElementById('sound-icon');
+            const soundBtn = document.getElementById('sound-toggle-btn');
+            
+            if (soundEnabled) {
+                soundIcon.textContent = '🔊';
+                soundBtn.classList.remove('muted');
+                // Retoma música de fundo se o jogo estiver ativo
+                if (!coverScreen.classList.contains('hidden')) {
+                    bgm.play().catch(e => console.log("Erro ao retomar BGM:", e));
+                }
+            } else {
+                soundIcon.textContent = '🔇';
+                soundBtn.classList.add('muted');
+                // Para música de fundo
+                bgm.pause();
+            }
         }
 
         /**
@@ -4443,8 +4524,10 @@
             if (gameStarted) return;
             gameStarted = true;
             
-            bgm.volume = 0.3; 
-            bgm.play().catch(e => console.log("Falha ao tocar BGM:", e));
+            if (soundEnabled) {
+                bgm.volume = 0.3; 
+                bgm.play().catch(e => console.log("Falha ao tocar BGM:", e));
+            }
             
             introVideo.pause();
             introVideo.currentTime = 0;
@@ -4466,8 +4549,10 @@
                 return;
             });
             
-            bgm.volume = 0.3; 
-            bgm.play().catch(e => console.log("Falha ao tocar BGM:", e));
+            if (soundEnabled) {
+                bgm.volume = 0.3; 
+                bgm.play().catch(e => console.log("Falha ao tocar BGM:", e));
+            }
             
             introVideo.addEventListener('ended', skipVideoAndStartGame);
         }
@@ -4538,5 +4623,5 @@
             });
         }
     </script>
- <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'999030b0a504b3c6',t:'MTc2MjIxODE5MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9990978c52219ad4',t:'MTc2MjIyMjQwNC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
